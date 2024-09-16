@@ -89,16 +89,16 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
 
         System.out.println("Iniciando generación de eventos concurrentes...");
 
-        // Iniciar la generación de eventos
+        // Iniciamos la generación de eventos
         eventoService.iniciarGeneracionEventosConcurrentes();
 
-        // Esperar un tiempo para que se generen algunos eventos (2 minutos, por ejemplo)
-        Thread.sleep(180000);  // Pausar 3 minutos para permitir la generación de eventos
+        // Esperamos un tiempo para que se generen algunos eventos (3 minutos)
+        Thread.sleep(180000);  // Pausamos 3 minutos para permitir la generación de eventos
 
-        // Obtener y mostrar los eventos generados
+        // Obtenemos y mostramos los eventos generados
         List<EventoDTO> eventos = eventoService.findAll();
 
-        // Verificar que los eventos se han almacenado
+        // Verificamos que los eventos se han almacenado
         if (eventos.isEmpty()) {
             System.out.println("No se generaron eventos.");
         } else {
