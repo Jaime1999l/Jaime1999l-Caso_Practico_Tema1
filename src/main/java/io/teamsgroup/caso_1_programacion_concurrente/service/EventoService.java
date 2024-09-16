@@ -40,26 +40,26 @@ public class EventoService {
                 .toList();
     }
 
-    public EventoDTO get(final Long id) {
+    public EventoDTO get(final Integer id) {
         return eventoRepository.findById(id)
                 .map(evento -> mapToDTO(evento, new EventoDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Long create(final EventoDTO eventoDTO) {
+    public Integer create(final EventoDTO eventoDTO) {
         final Evento evento = new Evento();
         mapToEntity(eventoDTO, evento);
         return eventoRepository.save(evento).getId();
     }
 
-    public void update(final Long id, final EventoDTO eventoDTO) {
+    public void update(final Integer id, final EventoDTO eventoDTO) {
         final Evento evento = eventoRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(eventoDTO, evento);
         eventoRepository.save(evento);
     }
 
-    public void delete(final Long id) {
+    public void delete(final Integer id) {
         eventoRepository.deleteById(id);
     }
 

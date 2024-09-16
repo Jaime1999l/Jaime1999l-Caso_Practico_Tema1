@@ -10,6 +10,7 @@ import io.teamsgroup.caso_1_programacion_concurrente.repos.UsuarioRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.util.NotFoundException;
 import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedWarning;
 import java.util.List;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class SensorMovimientoService {
     private final EventoRepository eventoRepository;
 
     public SensorMovimientoService(final SensorMovimientoRepository sensorMovimientoRepository,
-            final UsuarioRepository usuarioRepository, final EventoRepository eventoRepository) {
+                                   final UsuarioRepository usuarioRepository, final EventoRepository eventoRepository) {
         this.sensorMovimientoRepository = sensorMovimientoRepository;
         this.usuarioRepository = usuarioRepository;
         this.eventoRepository = eventoRepository;
@@ -58,8 +59,22 @@ public class SensorMovimientoService {
         sensorMovimientoRepository.deleteById(id);
     }
 
+    /*@Async
+    public void processSensorMovimientoEvents() {
+        List<SensorMovimiento> sensors = sensorMovimientoRepository.findAll();
+        for (SensorMovimiento sensorMovimiento : sensors) {
+            processSensorMovimientoEvent(sensorMovimiento);
+        }
+    }
+
+    private void processSensorMovimientoEvent(SensorMovimiento sensorMovimiento) {
+        Evento evento = new Evento();
+        evento.setDatos("Evento generado por SensorMovimiento con ID: " + sensorMovimiento.getId());
+        eventoRepository.save(evento);
+    }*/
+
     private SensorMovimientoDTO mapToDTO(final SensorMovimiento sensorMovimiento,
-            final SensorMovimientoDTO sensorMovimientoDTO) {
+                                         final SensorMovimientoDTO sensorMovimientoDTO) {
         sensorMovimientoDTO.setId(sensorMovimiento.getId());
         sensorMovimientoDTO.setNombre(sensorMovimiento.getNombre());
         sensorMovimientoDTO.setNotificacion(sensorMovimiento.getNotificacion());
@@ -69,7 +84,7 @@ public class SensorMovimientoService {
     }
 
     private SensorMovimiento mapToEntity(final SensorMovimientoDTO sensorMovimientoDTO,
-            final SensorMovimiento sensorMovimiento) {
+                                         final SensorMovimiento sensorMovimiento) {
         sensorMovimiento.setNombre(sensorMovimientoDTO.getNombre());
         sensorMovimiento.setNotificacion(sensorMovimientoDTO.getNotificacion());
         sensorMovimiento.setDatosMovimiento(sensorMovimientoDTO.getDatosMovimiento());

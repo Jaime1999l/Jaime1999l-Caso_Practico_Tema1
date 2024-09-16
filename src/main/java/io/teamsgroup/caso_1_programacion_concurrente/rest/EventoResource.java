@@ -34,19 +34,19 @@ public class EventoResource {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventoDTO> getEvento(@PathVariable(name = "id") final Long id) {
+    public ResponseEntity<EventoDTO> getEvento(@PathVariable(name = "id") final Integer id) {
         return ResponseEntity.ok(eventoService.get(id));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createEvento(@RequestBody @Valid final EventoDTO eventoDTO) {
-        final Long createdId = eventoService.create(eventoDTO);
+    public ResponseEntity<Integer> createEvento(@RequestBody @Valid final EventoDTO eventoDTO) {
+        final Integer createdId = eventoService.create(eventoDTO);
         return new ResponseEntity<>(createdId, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Long> updateEvento(@PathVariable(name = "id") final Long id,
+    public ResponseEntity<Integer> updateEvento(@PathVariable(name = "id") final Integer id,
             @RequestBody @Valid final EventoDTO eventoDTO) {
         eventoService.update(id, eventoDTO);
         return ResponseEntity.ok(id);
@@ -54,7 +54,7 @@ public class EventoResource {
 
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteEvento(@PathVariable(name = "id") final Long id) {
+    public ResponseEntity<Void> deleteEvento(@PathVariable(name = "id") final Integer id) {
         eventoService.delete(id);
         return ResponseEntity.noContent().build();
     }

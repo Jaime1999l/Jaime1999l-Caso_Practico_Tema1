@@ -31,10 +31,10 @@ public class UsuarioService {
     private final SensorAccesoRepository sensorAccesoRepository;
 
     public UsuarioService(final UsuarioRepository usuarioRepository,
-            final RolRepository rolRepository, final CredencialesRepository credencialesRepository,
-            final SensorMovimientoRepository sensorMovimientoRepository,
-            final SensorTemperaturaRepository sensorTemperaturaRepository,
-            final SensorAccesoRepository sensorAccesoRepository) {
+                          final RolRepository rolRepository, final CredencialesRepository credencialesRepository,
+                          final SensorMovimientoRepository sensorMovimientoRepository,
+                          final SensorTemperaturaRepository sensorTemperaturaRepository,
+                          final SensorAccesoRepository sensorAccesoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.credencialesRepository = credencialesRepository;
@@ -93,17 +93,23 @@ public class UsuarioService {
         usuario.setCorreo(usuarioDTO.getCorreo());
         usuario.setTelefono(usuarioDTO.getTelefono());
         usuario.setDireccion(usuarioDTO.getDireccion());
-        final Rol usuarios = usuarioDTO.getUsuarios() == null ? null : rolRepository.findById(usuarioDTO.getUsuarios())
-                .orElseThrow(() -> new NotFoundException("usuarios not found"));
-        usuario.setUsuarios(usuarios);
-        final Credenciales usuario = usuarioDTO.getUsuario() == null ? null : credencialesRepository.findById(usuarioDTO.getUsuario())
-                .orElseThrow(() -> new NotFoundException("usuario not found"));
-        usuario.setUsuario(usuario);
+        final Rol rolUsuario = usuarioDTO.getUsuarios() == null
+                ? null
+                : rolRepository.findById(usuarioDTO.getUsuarios())
+                .orElseThrow(() -> new NotFoundException("Rol no encontrado"));
+        usuario.setUsuarios(rolUsuario);
+        final Credenciales credencialesUsuario = usuarioDTO.getUsuario() == null
+                ? null
+                : credencialesRepository.findById(usuarioDTO.getUsuario())
+                .orElseThrow(() -> new NotFoundException("Credenciales no encontradas"));
+        usuario.setUsuario(credencialesUsuario);
+
         return usuario;
     }
 
+
     public boolean usuarioExists(final Integer id) {
-        return usuarioRepository.existsByUsuarioId(id);
+        return usuarioRepository.existsById(id);
     }
 
     public ReferencedWarning getReferencedWarning(final Integer id) {
@@ -132,3 +138,4 @@ public class UsuarioService {
     }
 
 }
+

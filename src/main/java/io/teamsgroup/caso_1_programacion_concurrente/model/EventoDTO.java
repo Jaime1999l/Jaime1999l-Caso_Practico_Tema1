@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class EventoDTO {
 
-    private Long id;
+    private Integer id;
 
     @NotNull
     @Size(max = 255)
