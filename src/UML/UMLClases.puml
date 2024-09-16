@@ -1,0 +1,87 @@
+@startuml
+
+class Usuario {
+    Integer id
+    String nombre
+    String apellido1
+    String apellido2
+    String correo
+    Integer telefono
+    String direccion
+    OffsetDateTime dateCreated
+    OffsetDateTime lastUpdated
+}
+
+class Rol {
+    Integer id
+    String nombre
+    OffsetDateTime dateCreated
+    OffsetDateTime lastUpdated
+}
+
+class Credenciales {
+    Integer id
+    String contrasena
+    OffsetDateTime dateCreated
+    OffsetDateTime lastUpdated
+}
+
+class SensorMovimiento {
+    Integer id
+    String nombre
+    Notificacion notificacion
+    OffsetDateTime dateCreated
+    OffsetDateTime lastUpdated
+    String datosMovimiento
+}
+
+class SensorTemperatura {
+    Integer id
+    String nombre
+    Notificacion notificacion
+    OffsetDateTime dateCreated
+    OffsetDateTime lastUpdated
+    Double datosTemperatura
+}
+
+class SensorAcceso {
+    Integer id
+    String nombre
+    Notificacion notificacion
+    OffsetDateTime dateCreated
+    OffsetDateTime lastUpdated
+    String datosAcceso
+    Boolean respuesta
+}
+
+class Evento {
+    Integer id
+    String nombre
+    String datos
+    OffsetDateTime dateCreated
+    OffsetDateTime lastUpdated
+}
+
+enum Notificacion {
+    ACTIVADO
+    DESACTIVADO
+    ERROR
+    USUARIO_REGISTRADO
+    ACCESO_DENEGADO
+}
+
+Usuario "1" -- "0..*" Rol : tiene
+Usuario "0..1" -- "0..*" SensorMovimiento : sensoresMovimiento
+Usuario "0..1" -- "0..*" SensorTemperatura : sensoresTemperatura
+Usuario "0..1" -- "0..*" SensorAcceso : sensoresAcceso
+Usuario "0..1" -- "1" Credenciales : usa
+
+SensorMovimiento "0..1" -- "0..*" Evento : genera
+SensorTemperatura "0..1" -- "0..*" Evento : genera
+SensorAcceso "0..1" -- "0..*" Evento : genera
+
+Evento "0..*" -- "0..1" SensorMovimiento
+Evento "0..*" -- "0..1" SensorTemperatura
+Evento "0..*" -- "0..1" SensorAcceso
+
+@enduml
