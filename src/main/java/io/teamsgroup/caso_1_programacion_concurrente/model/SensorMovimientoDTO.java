@@ -18,7 +18,7 @@ public class SensorMovimientoDTO {
 
     @NotNull
     @Size(max = 255)
-    private String notificacion;
+    private Notificacion notificacion;
 
     @NotNull
     @Size(max = 255)

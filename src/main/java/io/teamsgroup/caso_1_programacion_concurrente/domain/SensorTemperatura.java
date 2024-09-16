@@ -1,5 +1,6 @@
 package io.teamsgroup.caso_1_programacion_concurrente.domain;
 
+import io.teamsgroup.caso_1_programacion_concurrente.model.Notificacion;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,5 +28,15 @@ public class SensorTemperatura extends Sensor {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sensor_temperatura_id")
     private Usuario sensorTemperatura;
+
+    public SensorTemperatura(Integer id, String nombre, Notificacion notificacion, Double datosTemperatura, Set<Evento> sensorId, Usuario sensorTemperatura) {
+        super(id, nombre, notificacion);
+        this.datosTemperatura = datosTemperatura;
+        this.sensorId = sensorId;
+        this.sensorTemperatura = sensorTemperatura;
+    }
+    public SensorTemperatura() {
+        super();
+    }
 
 }

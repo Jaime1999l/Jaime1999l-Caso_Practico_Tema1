@@ -18,7 +18,7 @@ public class SensorTemperaturaDTO {
 
     @NotNull
     @Size(max = 255)
-    private String notificacion;
+    private Notificacion notificacion;
 
     @NotNull
     private Double datosTemperatura;

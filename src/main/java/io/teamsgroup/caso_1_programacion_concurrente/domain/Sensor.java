@@ -1,5 +1,6 @@
 package io.teamsgroup.caso_1_programacion_concurrente.domain;
 
+import io.teamsgroup.caso_1_programacion_concurrente.model.Notificacion;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -29,7 +30,7 @@ public abstract class Sensor {
     private String nombre;
 
     @Column(nullable = false)
-    private String notificacion;
+    private Notificacion notificacion;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -39,4 +40,13 @@ public abstract class Sensor {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+    public Sensor(Integer id, String nombre, Notificacion notificacion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.notificacion = notificacion;
+        this.dateCreated = OffsetDateTime.now();
+        this.lastUpdated = OffsetDateTime.now();
+    }
+    public Sensor() {
+    }
 }
