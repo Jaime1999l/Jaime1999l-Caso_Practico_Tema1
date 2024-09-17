@@ -1,8 +1,6 @@
 package io.teamsgroup.caso_1_programacion_concurrente;
 
-import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorAcceso;
-import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorMovimiento;
-import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorTemperatura;
+
 import io.teamsgroup.caso_1_programacion_concurrente.model.*;
 import io.teamsgroup.caso_1_programacion_concurrente.service.EventoService;
 import io.teamsgroup.caso_1_programacion_concurrente.service.SensorAccesoService;
@@ -34,6 +32,33 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
 
     @Override
     public void run(String... args) throws Exception {
+
+        System.out.println("Limpiando base de datos...");
+
+        // Eliminar todos los eventos
+        List<EventoDTO> eventos1 = eventoService.findAll();
+        for (EventoDTO event : eventos1) {
+            eventoService.delete(event.getId());
+        }
+
+        // Eliminar todos los sensores de movimiento
+        List<SensorMovimientoDTO> sensoresMovimiento1 = sensorMovimientoService.findAll();
+        for (SensorMovimientoDTO sensor : sensoresMovimiento1) {
+            sensorMovimientoService.delete(sensor.getId());
+        }
+
+        // Eliminar todos los sensores de acceso
+        List<SensorAccesoDTO> sensoresAcceso1 = sensorAccesoService.findAll();
+        for (SensorAccesoDTO sensor : sensoresAcceso1) {
+            sensorAccesoService.delete(sensor.getId());
+        }
+
+        // Eliminar todos los sensores de temperatura
+        List<SensorTemperaturaDTO> sensoresTemperatura1 = sensorTemperaturaService.findAll();
+        for (SensorTemperaturaDTO sensor : sensoresTemperatura1) {
+            sensorTemperaturaService.delete(sensor.getId());
+        }
+
         System.out.println("Iniciando sensores...\n");
         // Creamos 5 sensores de movimiento
         for (int i = 1; i <= 5; i++) {
