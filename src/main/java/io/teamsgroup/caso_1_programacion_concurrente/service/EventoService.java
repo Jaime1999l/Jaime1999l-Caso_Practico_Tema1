@@ -182,4 +182,9 @@ public class EventoService {
     private int getRandomInterval() {
         return 1 + RANDOM.nextInt(3);  // Generamos un número entre 1 y 3
     }
+
+    // Metodo para detener la generacion de eventos
+    public void detenerGeneracionEventos() {
+        scheduler.shutdown();
+    }
 }
