@@ -55,7 +55,7 @@ public class Usuario {
     @JoinColumn(name = "usuarios_id", nullable = false)
     private Rol usuarios;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private Credenciales usuario;
 

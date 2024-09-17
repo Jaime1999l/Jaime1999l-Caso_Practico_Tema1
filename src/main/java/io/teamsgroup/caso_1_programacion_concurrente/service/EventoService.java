@@ -27,7 +27,7 @@ public class EventoService {
     private final SensorMovimientoRepository sensorMovimientoRepository;
     private final SensorTemperaturaRepository sensorTemperaturaRepository;
     private final SensorAccesoRepository sensorAccesoRepository;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5); // 5 hilos para 5 sensores
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
     private static final Random RANDOM = new Random();
 
