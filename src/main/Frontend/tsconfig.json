@@ -7,7 +7,7 @@
     "outDir": "./target/classes/static/out-tsc",
     "removeComments": true,
     "target": "ES5",
-    "baseUrl": "src/main/resources",
+    "baseUrl": "../resources",
     "esModuleInterop": true,
     "moduleResolution": "node",
     "paths": {},
