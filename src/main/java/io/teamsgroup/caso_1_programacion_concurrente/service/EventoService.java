@@ -178,6 +178,11 @@ public class EventoService {
         }
     }
 
+    public void deleteAll() {
+        eventoRepository.deleteAll();
+        System.out.println("Todos los eventos han sido eliminados.");
+    }
+
     // Metodo para obtener un intervalo aleatorio
     private int getRandomInterval() {
         return 1 + RANDOM.nextInt(3);  // Generamos un número entre 1 y 3

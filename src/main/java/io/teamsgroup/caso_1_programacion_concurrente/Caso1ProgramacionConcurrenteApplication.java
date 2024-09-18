@@ -37,6 +37,31 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
     public void run(String... args) throws Exception {
         Scanner scanner = new Scanner(System.in);
 
+        System.out.println("Limpiando base de datos...");
+
+        // Eliminar todos los eventos relacionados antes de eliminar los sensores
+        eventoService.deleteAll();  // Asumiendo que eventoService tiene un método para eliminar todos los eventos
+
+        // Eliminar todos los sensores de movimiento
+        List<SensorMovimientoDTO> sensoresMovimiento = sensorMovimientoService.findAll();
+        for (SensorMovimientoDTO sensor : sensoresMovimiento) {
+            sensorMovimientoService.delete(sensor.getId());
+        }
+
+        // Eliminar todos los sensores de acceso
+        List<SensorAccesoDTO> sensoresAcceso = sensorAccesoService.findAll();
+        for (SensorAccesoDTO sensor : sensoresAcceso) {
+            sensorAccesoService.delete(sensor.getId());
+        }
+
+        // Eliminar todos los sensores de temperatura
+        List<SensorTemperaturaDTO> sensoresTemperatura = sensorTemperaturaService.findAll();
+        for (SensorTemperaturaDTO sensor : sensoresTemperatura) {
+            sensorTemperaturaService.delete(sensor.getId());
+        }
+
+        System.out.println("Base de datos vaciada.\n");
+
         // -------- Registro de Usuario --------
         System.out.println("=== Registro de Usuario ===");
         System.out.print("Ingrese su nombre: ");
@@ -97,6 +122,9 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
             System.out.println("Inicio de sesión exitoso. Token generado: " + authResponse.getToken());
 
             // ----------------- Crear Sensores -----------------
+
+
+
             System.out.println("\nIniciando creación de sensores...\n");
 
             for (int i = 1; i <= 5; i++) {
@@ -127,23 +155,23 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
             System.out.println("Sensores creados correctamente.");
 
             // Mostrar Sensores de Movimiento
-            List<SensorMovimientoDTO> sensoresMovimiento = sensorMovimientoService.findAll();
+            List<SensorMovimientoDTO> sensoresMovimiento1 = sensorMovimientoService.findAll();
             System.out.println("\nSensores de Movimiento Creados:");
-            for (SensorMovimientoDTO sensor : sensoresMovimiento) {
+            for (SensorMovimientoDTO sensor : sensoresMovimiento1) {
                 System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() + ", Datos: " + sensor.getDatosMovimiento());
             }
 
             // Mostrar Sensores de Acceso
-            List<SensorAccesoDTO> sensoresAcceso = sensorAccesoService.findAll();
+            List<SensorAccesoDTO> sensoresAcceso1 = sensorAccesoService.findAll();
             System.out.println("\nSensores de Acceso Creados:");
-            for (SensorAccesoDTO sensor : sensoresAcceso) {
+            for (SensorAccesoDTO sensor : sensoresAcceso1) {
                 System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() + ", Datos: " + sensor.getDatosAcceso() + ", Respuesta: " + (sensor.getRespuesta() ? "Permitido" : "Denegado"));
             }
 
             // Mostrar Sensores de Temperatura
-            List<SensorTemperaturaDTO> sensoresTemperatura = sensorTemperaturaService.findAll();
+            List<SensorTemperaturaDTO> sensoresTemperatura1 = sensorTemperaturaService.findAll();
             System.out.println("\nSensores de Temperatura Creados:");
-            for (SensorTemperaturaDTO sensor : sensoresTemperatura) {
+            for (SensorTemperaturaDTO sensor : sensoresTemperatura1) {
                 System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() + ", Temperatura: " + sensor.getDatosTemperatura());
             }
 
