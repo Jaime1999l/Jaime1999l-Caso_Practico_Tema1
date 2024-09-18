@@ -3,7 +3,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/Caso-1-Programacion-Concurrente?serverTimezone=UTC
     username: root
-    password: <<YOUR_PASSWORD>> # Asegúrate de cambiar esto con tu contraseña real
+    password: <<YOUR_PASSWORD>> # Cambia por tu contraseña
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
@@ -23,12 +23,10 @@ spring:
 
   # Configuración del servidor
   server:
-    port: 8083 # El backend corre en el puerto 8083
+    port: 8080 # El backend corre en el puerto 8080
 
-# Configuración de CORS para permitir la comunicación desde el frontend
-cors:
-  allowed-origins: "http://localhost:8082" # Permite que el frontend (en 8082) acceda a la API
-  allowed-methods: "GET,POST,PUT,DELETE"
+# Configuración de CORS para permitir la comunicación desde el frontend (puerto 8082)
+# La configuración de CORS se hace principalmente en el código de configuración de seguridad (SecurityConfig.java)
 
 # Configuración de manejo de errores
 error:
