@@ -105,6 +105,7 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
         System.out.println("Usuario registrado exitosamente.");
 
         // ----------------- Inicio de Sesión -----------------
+
         System.out.println("\n=== Inicio de Sesión ===");
         System.out.print("Ingrese su correo: ");
         String loginCorreo = scanner.nextLine();
@@ -122,8 +123,6 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
             System.out.println("Inicio de sesión exitoso. Token generado: " + authResponse.getToken());
 
             // ----------------- Crear Sensores -----------------
-
-
 
             System.out.println("\nIniciando creación de sensores...\n");
 
