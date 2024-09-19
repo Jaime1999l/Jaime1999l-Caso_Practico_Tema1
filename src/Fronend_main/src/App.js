@@ -10,7 +10,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path="*" element={<NotFoundPage />} />
-                <Route path="/" element={<LoginPage />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/user" element={<UserDashboard />} />
             </Routes>
