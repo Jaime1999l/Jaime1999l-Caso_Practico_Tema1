@@ -55,6 +55,7 @@ public class EventoResource {
     // ========================
     // NUEVO ENDPOINT
     // ========================
+
     @PostMapping("/iniciar-generacion-eventos")
     public ResponseEntity<Void> iniciarGeneracionEventos() {
         eventoService.iniciarGeneracionEventosConcurrentes();

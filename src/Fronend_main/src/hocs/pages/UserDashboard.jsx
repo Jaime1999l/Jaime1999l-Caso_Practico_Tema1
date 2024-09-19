@@ -1,44 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import SensorTable from '../components/SensorTable';
+// UserDashboard.jsx
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import AuthService from '../../services/authService/page';
 
 export default function UserDashboard() {
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState('');
-
-    useEffect(() => {
-        // Simulamos la carga de datos
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
-    }, []);
-
-    if (isLoading) {
-        return <p>Loading dashboard...</p>;
+    if (!AuthService.isAuthenticated() || AuthService.getCurrentUserRole() !== 'user') {
+        return <Navigate to="/login" />;
     }
 
     return (
-        <div className="user-dashboard-container">
-            <style jsx>{`
-                .user-dashboard-container {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    min-height: 100vh;
-                    background-color: #f9f9f9;
-                    color: #333;
-                    font-family: 'Arial', sans-serif;
-                }
-                h1 {
-                    margin-bottom: 1rem;
-                    color: #333;
-                }
-            `}</style>
-            <h1>User Dashboard</h1>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <SensorTable sensorType="temperature" />
+        <div>
+            <h1>Welcome to User Dashboard</h1>
+            {/* Aquí se puede colocar la lógica de contenido del dashboard */}
         </div>
     );
 }
+

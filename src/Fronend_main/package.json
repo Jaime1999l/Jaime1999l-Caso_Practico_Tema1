@@ -3,7 +3,8 @@
   "author": "Bootify.io",
   "scripts": {
     "devserver": "webpack serve --open --mode development",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "start": "webpack serve --open --"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

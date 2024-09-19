@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../services/authService/page';
+import AuthService from '../../services/authService/page';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -17,11 +17,8 @@ export default function LoginPage() {
         setError('');
 
         try {
-            const response = await login(email, password);
-            const { token, role } = response;
-
-            // Almacenar token en localStorage
-            localStorage.setItem('token', token);
+            const response = await AuthService.login(email, password);
+            const { role } = response;
 
             // Redirigir al usuario dependiendo del rol
             if (role === 'admin') {
