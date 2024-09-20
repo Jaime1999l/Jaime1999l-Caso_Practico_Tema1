@@ -9,13 +9,14 @@ import io.teamsgroup.caso_1_programacion_concurrente.model.RegisterRequest;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.RolRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.UsuarioRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.CredencialesRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
 @Service
 public class AuthService {
 
@@ -30,32 +31,36 @@ public class AuthService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    @Transactional
     public ResponseEntity<AuthResponse> login(LoginRequest loginRequest) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(loginRequest.getCorreo());
 
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
+            // Forzar la carga del objeto Rol
+            Hibernate.initialize(usuario.getUsuarios());
             // Verificar la contraseña
             if (passwordEncoder.matches(loginRequest.getContrasena(), usuario.getUsuario().getContrasena())) {
-                // Login exitoso
-                return ResponseEntity.ok(new AuthResponse("Login exitoso", "FAKE_JWT_TOKEN"));
+                // Login exitoso: agrega el rol al AuthResponse
+                String rol = usuario.getUsuarios().getNombre(); // Obtener el nombre del rol
+                return ResponseEntity.ok(new AuthResponse("Login exitoso", "FAKE_JWT_TOKEN", rol));
             } else {
-                return ResponseEntity.status(401).body(new AuthResponse("Credenciales incorrectas", null));
+                return ResponseEntity.status(401).body(new AuthResponse("Credenciales incorrectas", null, null));
             }
         }
 
-        return ResponseEntity.status(404).body(new AuthResponse("Usuario no encontrado", null));
+        return ResponseEntity.status(404).body(new AuthResponse("Usuario no encontrado", null, null));
     }
 
     public ResponseEntity<AuthResponse> register(RegisterRequest registerRequest, String rolNombre) {
         // Verificar si el usuario ya existe
         if (usuarioRepository.findByCorreo(registerRequest.getCorreo()).isPresent()) {
-            return ResponseEntity.status(400).body(new AuthResponse("El usuario ya existe", null));
+            return ResponseEntity.status(400).body(new AuthResponse("El usuario ya existe", null, null));
         }
 
         // Validar el rol ingresado por el administrador
         if (!"admin".equalsIgnoreCase(rolNombre) && !"user".equalsIgnoreCase(rolNombre)) {
-            return ResponseEntity.status(400).body(new AuthResponse("Rol no válido. Use 'admin' o 'user'.", null));
+            return ResponseEntity.status(400).body(new AuthResponse("Rol no válido. Use 'admin' o 'user'.", null, null));
         }
 
         // Buscar si el rol ya existe
@@ -90,7 +95,7 @@ public class AuthService {
 
         usuarioRepository.save(nuevoUsuario); // Guardar el usuario en la base de datos
 
-        // Respuesta exitosa
-        return ResponseEntity.ok(new AuthResponse("Usuario registrado con éxito", null));
+        // Respuesta exitosa con el rol asignado
+        return ResponseEntity.ok(new AuthResponse("Usuario registrado con éxito", null, rolNombre));
     }
 }

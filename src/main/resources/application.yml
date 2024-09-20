@@ -1,11 +1,14 @@
+# Configuración de la base de datos
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/Caso-1-Programacion-Concurrente?serverTimezone=UTC
     username: root
-    password: <<YOUR_PASSWORD>>
+    password: <<YOUR_PASSWORD>> # Cambia por tu contraseña
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
+
+  # Configuración de JPA e Hibernate
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,9 +21,14 @@ spring:
         id:
           new_generator_mappings: true
 
-  docker:
-    compose:
-      lifecycle-management: start-only
+  # Configuración del servidor
+server:
+  port: 8080 # El backend corre en el puerto 8080
+
+# Configuración de CORS para permitir la comunicación desde el frontend (puerto 8082)
+# La configuración de CORS se hace principalmente en el código de configuración de seguridad (SecurityConfig.java)
+
+# Configuración de manejo de errores
 error:
   handling:
     http-status-in-json-response: true
@@ -30,5 +38,18 @@ error:
       5xx: ERROR
     codes:
       UsuarioUsuarioUnique: USUARIO_USUARIO_UNIQUE
-springdoc:
-  pathsToMatch: /api/**
+
+# Configuración de logging
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    org.hibernate.SQL: DEBUG
+    io.teamsgroup.caso_1_programacion_concurrente: DEBUG
+
+# Configuración de endpoints de gestión
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

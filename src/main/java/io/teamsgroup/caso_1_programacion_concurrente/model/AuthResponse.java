@@ -8,10 +8,12 @@ import lombok.Setter;
 public class AuthResponse {
 
     private String mensaje;
-    private String token;  // Si estás utilizando JWT, aquí puedes devolver el token
+    private String token;
+    private String role; // Agrega el campo role
 
-    public AuthResponse(String mensaje, String token) {
+    public AuthResponse(String mensaje, String token, String role) {
         this.mensaje = mensaje;
         this.token = token;
+        this.role = role; // Inicializa el campo role
     }
 }
