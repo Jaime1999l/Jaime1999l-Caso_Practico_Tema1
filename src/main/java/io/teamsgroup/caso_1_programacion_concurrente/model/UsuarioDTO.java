@@ -1,15 +1,16 @@
 package io.teamsgroup.caso_1_programacion_concurrente.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import io.teamsgroup.caso_1_programacion_concurrente.domain.Rol;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-
+@Entity
+@Table(name = "Usuarios")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 public class UsuarioDTO {
@@ -40,6 +41,10 @@ public class UsuarioDTO {
 
     @Size(max = 255)
     private String direccion;
+
+    @ManyToOne(fetch = FetchType.EAGER) // Relación con la entidad Rol
+    @JoinColumn(name = "usuarios_id", nullable = false)
+    private Rol usuarios1;
 
     @NotNull
     private Integer usuarios;

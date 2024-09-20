@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useEffect } from 'react';
 import SensorTable from '../components/SensorTable';
 import UserRegisterForm from '../components/UserRegisterForm';

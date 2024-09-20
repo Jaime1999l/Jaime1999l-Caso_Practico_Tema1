@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState } from 'react';
 import AuthService from '../../services/authService/page.js';
 import { useNavigate } from 'react-router-dom';

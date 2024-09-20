@@ -1,8 +1,6 @@
-'use client';
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../services/authService/page';
+import AuthService from '../../services/authService/page';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -17,25 +15,33 @@ export default function LoginPage() {
         setError('');
 
         try {
-            const response = await login(email, password);
-            const { token, role } = response;
+            const response = await AuthService.login(email, password);
+            console.log('Login response:', response); // Verificar la respuesta del backend
+            const { token, role } = response; // Extraer el token y rol del objeto de respuesta
 
-            // Almacenar token en localStorage
-            localStorage.setItem('token', token);
+            if (role) { // Verificar que el rol esté presente
+                // Guardar el token y rol en el almacenamiento local
+                localStorage.setItem('token', token);
+                localStorage.setItem('role', role);
 
-            // Redirigir al usuario dependiendo del rol
-            if (role === 'admin') {
-                navigate('/admin');
+                // Redirigir al usuario dependiendo del rol
+                if (role === 'admin') {
+                    navigate('/admin');
+                } else {
+                    navigate('/user');
+                }
             } else {
-                navigate('/user');
+                setError('Role not recognized');
             }
         } catch (err) {
-            // Manejo de errores
-            setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
+            setError(err.message || 'Error during login');
         } finally {
             setLoading(false);
         }
     };
+
+
+
 
     return (
         <div className="login-page-container">

@@ -35,7 +35,75 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
 
     @Override
     public void run(String... args) throws Exception {
-        Scanner scanner = new Scanner(System.in);
+        // Limpiar la base de datos (opcional, dependiendo de los requisitos de tu aplicación)
+        limpiarBaseDeDatos();
+
+        // Registro de un nuevo usuario (ejemplo de creación)
+        registrarNuevoUsuario(
+                "Juan",
+                "Pérez",
+                "López",
+                "juan.perez@example.com",
+                123456789,
+                "Calle Falsa 123",
+                "password123",
+                "admin"
+        );
+
+        System.out.println("Usuario registrado exitosamente.");
+    }
+
+    /**
+     * Limpia los datos de la base de datos eliminando eventos y sensores.
+     */
+    private void limpiarBaseDeDatos() {
+        System.out.println("Limpiando base de datos...");
+
+        // Eliminar todos los eventos relacionados antes de eliminar los sensores
+        eventoService.deleteAll();
+
+        // Eliminar todos los sensores de movimiento
+        sensorMovimientoService.findAll().forEach(sensor -> sensorMovimientoService.delete(sensor.getId()));
+
+        // Eliminar todos los sensores de acceso
+        sensorAccesoService.findAll().forEach(sensor -> sensorAccesoService.delete(sensor.getId()));
+
+        // Eliminar todos los sensores de temperatura
+        sensorTemperaturaService.findAll().forEach(sensor -> sensorTemperaturaService.delete(sensor.getId()));
+
+        System.out.println("Base de datos vaciada.\n");
+    }
+
+    /**
+     * Registra un nuevo usuario en la base de datos.
+     *
+     * @param nombre     Nombre del usuario.
+     * @param apellido1  Primer apellido del usuario.
+     * @param apellido2  Segundo apellido del usuario.
+     * @param correo     Correo electrónico del usuario.
+     * @param telefono   Número de teléfono del usuario.
+     * @param direccion  Dirección del usuario (opcional).
+     * @param contrasena Contraseña del usuario.
+     * @param rolNombre  Rol del usuario (admin/user).
+     */
+    private void registrarNuevoUsuario(String nombre, String apellido1, String apellido2, String correo,
+                                       int telefono, String direccion, String contrasena, String rolNombre) {
+
+        // Crear el objeto RegisterRequest con la información del usuario
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setNombre(nombre);
+        registerRequest.setApellido1(apellido1);
+        registerRequest.setApellido2(apellido2);
+        registerRequest.setCorreo(correo);
+        registerRequest.setTelefono(telefono);
+        registerRequest.setDireccion(direccion);
+        registerRequest.setContrasena(contrasena);
+
+        // Llamada al método register con dos parámetros
+        authService.register(registerRequest, rolNombre);
+
+        System.out.println("Usuario registrado con nombre: " + nombre + " y rol: " + rolNombre);
+        /*Scanner scanner = new Scanner(System.in);
 
         System.out.println("Limpiando base de datos...");
 
@@ -187,6 +255,6 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
 
         } else {
             System.out.println("Error de inicio de sesión. Verifica las credenciales.");
-        }
+        }*/
     }
 }

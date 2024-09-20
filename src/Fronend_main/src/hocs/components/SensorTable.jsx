@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useEffect } from 'react';
 import SensorService from '../../services/sensorService/page';
 
@@ -9,19 +10,33 @@ export default function SensorTable({ sensorType }) {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        async function fetchSensors() {
+        // Crear una señal de cancelación para evitar actualizar el estado en un componente desmontado
+        let isMounted = true;
+
+        const fetchSensors = async () => {
             setLoading(true);
             try {
                 const response = await SensorService.getSensors(sensorType);
-                setSensors(response.data);
+                if (isMounted) { // Solo actualiza el estado si el componente está montado
+                    setSensors(response.data || []);
+                }
             } catch (err) {
-                setError('Failed to fetch sensors.');
+                if (isMounted) { // Solo actualiza el estado si el componente está montado
+                    setError('Failed to fetch sensors.');
+                }
             } finally {
-                setLoading(false);
+                if (isMounted) { // Solo actualiza el estado si el componente está montado
+                    setLoading(false);
+                }
             }
-        }
+        };
 
         fetchSensors();
+
+        // Cleanup function para desmontar el componente de forma segura
+        return () => {
+            isMounted = false;
+        };
     }, [sensorType]);
 
     return (
@@ -59,7 +74,7 @@ export default function SensorTable({ sensorType }) {
                     </tr>
                     </thead>
                     <tbody>
-                    {sensors.map(sensor => (
+                    {sensors.map((sensor) => (
                         <tr key={sensor.id}>
                             <td>{sensor.id}</td>
                             <td>{sensor.name}</td>
