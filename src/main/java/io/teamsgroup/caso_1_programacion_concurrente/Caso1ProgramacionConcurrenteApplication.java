@@ -35,22 +35,32 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
 
     @Override
     public void run(String... args) throws Exception {
-        // Limpiar la base de datos (opcional, dependiendo de los requisitos de tu aplicación)
+        // Limpiar la base de datos
         limpiarBaseDeDatos();
 
-        // Registro de un nuevo usuario (ejemplo de creación)
+        // Registro de un nuevo usuario
         registrarNuevoUsuario(
-                "Juan",
-                "Pérez",
-                "López",
-                "juan.perez@example.com",
+                "Administrador",
+                "Ap",
+                "Ap2",
+                "usuario1@example.com",
                 123456789,
-                "Calle Falsa 123",
-                "password123",
+                "Calle Concurrente 123",
+                "12345",
                 "admin"
         );
+        registrarNuevoUsuario(
+                "Usuario",
+                "Ap",
+                "Ap2",
+                "usuario2@example.com",
+                123456789,
+                "Calle Concurrente 123",
+                "12345",
+                "user"
+        );
 
-        System.out.println("Usuario registrado exitosamente.");
+        System.out.println("Usuarios registrados exitosamente.");
     }
 
     /**
