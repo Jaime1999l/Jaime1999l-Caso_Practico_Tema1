@@ -1,9 +1,6 @@
 package io.teamsgroup.caso_1_programacion_concurrente.domain;
 
 import io.teamsgroup.caso_1_programacion_concurrente.model.Notificacion;
-import io.teamsgroup.caso_1_programacion_concurrente.repos.EventoRepository;
-import io.teamsgroup.caso_1_programacion_concurrente.rest.EventoResource;
-import io.teamsgroup.caso_1_programacion_concurrente.service.EventoService;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,12 +8,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.Executors;
+
 import java.util.concurrent.ScheduledExecutorService;
-import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 

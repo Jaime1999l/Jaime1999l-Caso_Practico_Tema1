@@ -1,9 +1,8 @@
-package io.teamsgroup.caso_1_programacion_concurrente.service;
+package io.teamsgroup.caso_1_programacion_concurrente.service.sensor;
 
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Evento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorMovimiento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Usuario;
-import io.teamsgroup.caso_1_programacion_concurrente.model.Notificacion;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.EventoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorMovimientoRepository;
@@ -11,7 +10,7 @@ import io.teamsgroup.caso_1_programacion_concurrente.repos.UsuarioRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.util.NotFoundException;
 import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedWarning;
 import java.util.List;
-import org.springframework.scheduling.annotation.Async;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,7 @@ package io.teamsgroup.caso_1_programacion_concurrente.rest;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
-import io.teamsgroup.caso_1_programacion_concurrente.service.SensorMovimientoService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorMovimientoService;
 import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedException;
 import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedWarning;
 import jakarta.validation.Valid;

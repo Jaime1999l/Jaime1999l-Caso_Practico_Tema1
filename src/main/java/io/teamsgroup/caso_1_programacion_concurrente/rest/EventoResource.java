@@ -2,7 +2,7 @@ package io.teamsgroup.caso_1_programacion_concurrente.rest;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.teamsgroup.caso_1_programacion_concurrente.model.EventoDTO;
-import io.teamsgroup.caso_1_programacion_concurrente.service.EventoService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.EventoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

@@ -1,14 +1,19 @@
 package io.teamsgroup.caso_1_programacion_concurrente;
 
 import io.teamsgroup.caso_1_programacion_concurrente.model.*;
-import io.teamsgroup.caso_1_programacion_concurrente.service.*;
+import io.teamsgroup.caso_1_programacion_concurrente.model.auth.RegisterRequest;
+import io.teamsgroup.caso_1_programacion_concurrente.service.auth.AuthService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.EventoService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorAccesoService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorMovimientoService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorTemperaturaService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.usuario.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication

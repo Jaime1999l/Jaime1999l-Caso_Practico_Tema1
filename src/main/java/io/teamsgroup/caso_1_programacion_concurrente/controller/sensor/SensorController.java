@@ -1,14 +1,13 @@
-package io.teamsgroup.caso_1_programacion_concurrente.controller;
+package io.teamsgroup.caso_1_programacion_concurrente.controller.sensor;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorAccesoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorTemperaturaDTO;
-import io.teamsgroup.caso_1_programacion_concurrente.service.SensorAccesoService;
-import io.teamsgroup.caso_1_programacion_concurrente.service.SensorMovimientoService;
-import io.teamsgroup.caso_1_programacion_concurrente.service.SensorTemperaturaService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorAccesoService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorMovimientoService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorTemperaturaService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

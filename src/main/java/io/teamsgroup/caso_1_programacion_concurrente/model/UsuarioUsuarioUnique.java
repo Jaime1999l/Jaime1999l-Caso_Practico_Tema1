@@ -4,7 +4,7 @@ import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 
-import io.teamsgroup.caso_1_programacion_concurrente.service.UsuarioService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.usuario.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;

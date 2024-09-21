@@ -1,4 +1,4 @@
-package io.teamsgroup.caso_1_programacion_concurrente.service;
+package io.teamsgroup.caso_1_programacion_concurrente.service.sensor;
 
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Evento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorAcceso;
