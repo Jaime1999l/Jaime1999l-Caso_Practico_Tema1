@@ -12,15 +12,26 @@ export default function AdminDashboard() {
     const [events, setEvents] = useState([]);
     const [error, setError] = useState('');
 
+    const movimientoTokenBase = 'TOKEN_MOVIMIENTO_Sensor_';
+    const accesoTokenBase = 'TOKEN_ACCESO_Sensor_';
+    const temperaturaTokenBase = 'TOKEN_TEMPERATURA_Sensor_';
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [movementData, accessData, temperatureData, eventData] = await Promise.all([
-                    getAllSensorMovimientos(),
-                    getAllSensorAccesos(),
-                    getAllSensorTemperaturas(),
-                    getAllEventos()
-                ]);
+                const movementData = [];
+                const accessData = [];
+                const temperatureData = [];
+
+                // Fetch data for each sensor type for ids 1 to 5
+                for (let i = 1; i <= 5; i++) {
+                    movementData.push(...await getAllSensorMovimientos(`${movimientoTokenBase}${i}`));
+                    accessData.push(...await getAllSensorAccesos(`${accesoTokenBase}${i}`));
+                    temperatureData.push(...await getAllSensorTemperaturas(`${temperaturaTokenBase}${i}`));
+                }
+
+                const eventData = await getAllEventos();
+
                 setMovementSensors(movementData);
                 setAccessSensors(accessData);
                 setTemperatureSensors(temperatureData);
@@ -123,5 +134,8 @@ export default function AdminDashboard() {
         </div>
     );
 }
+
+
+
 
 

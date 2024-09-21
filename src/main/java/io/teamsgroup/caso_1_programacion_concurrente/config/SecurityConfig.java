@@ -20,7 +20,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/**/**").permitAll()
                         .requestMatchers("/api/sensores/**").permitAll()
                         .requestMatchers("/api/eventos/**").permitAll()
                         .anyRequest().authenticated()
@@ -35,6 +34,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
+        configuration.addAllowedOriginPattern("*");
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

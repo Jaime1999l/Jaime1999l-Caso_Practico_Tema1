@@ -1,26 +1,19 @@
-const API_BASE_URL = 'http://localhost:8080/api';
-
-export async function getAllSensorAccesos() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/sensores/sensoresAcceso`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
+// Función para obtener todos los sensores de acceso con token
+export async function getAllSensorAccesos(token) {
+    console.log("Sending token to backend:", token);
+    // Cambiar de POST a GET y pasar el token como query parameter
+    const response = await fetch(`/api/sensores/sensoresAcceso?token=${token}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
         }
-
-        const data = await response.json();
-        console.log('Data received from sensor access API:', data);
-        return data;
-    } catch (error) {
-        console.error('Error fetching access sensors:', error);
-        throw error;
+    });
+    if (!response.ok) {
+        throw new Error('Error al obtener los sensores de acceso');
     }
+    return await response.json();
 }
+
 
 
 

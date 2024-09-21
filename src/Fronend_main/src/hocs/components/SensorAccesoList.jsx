@@ -4,11 +4,12 @@ import { getAllSensorAccesos } from '../../services/sensorAccesoService/page';
 export default function SensorAccesoList() {
     const [sensors, setSensors] = useState([]);
     const [error, setError] = useState('');
+    const accesoToken = 'TOKEN_ACCESO_Sensor de Acceso'; // Token definido
 
     useEffect(() => {
         const fetchSensors = async () => {
             try {
-                const response = await getAllSensorAccesos();
+                const response = await getAllSensorAccesos(accesoToken);
                 setSensors(response);
             } catch (err) {
                 setError('Failed to fetch access sensors.');
@@ -33,5 +34,6 @@ export default function SensorAccesoList() {
         </div>
     );
 }
+
 
 

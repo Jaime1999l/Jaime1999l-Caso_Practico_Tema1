@@ -34,6 +34,10 @@ public class SensorMovimientoService {
     public List<SensorMovimientoDTO> findAll(String token) {
         List<SensorMovimiento> sensorMovimientos = sensorMovimientoRepository.findAll(Sort.by("id"));
 
+
+        System.out.println("List of all sensors: " + sensorMovimientos.size()); // Verificar cuántos sensores se cargaron
+        System.out.println("Searching sensors with token: " + token); // Verificar el token buscado
+
         // Verificar el token proporcionado
         boolean tokenValido = sensorMovimientos.stream()
                 .anyMatch(sensor -> sensor.getToken().equals(token));

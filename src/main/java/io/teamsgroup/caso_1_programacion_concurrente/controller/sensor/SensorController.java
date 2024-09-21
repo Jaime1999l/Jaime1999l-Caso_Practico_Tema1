@@ -3,9 +3,6 @@ package io.teamsgroup.caso_1_programacion_concurrente.controller.sensor;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorAccesoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorTemperaturaDTO;
-import io.teamsgroup.caso_1_programacion_concurrente.model.sensor.SensorAccesoRequest;
-import io.teamsgroup.caso_1_programacion_concurrente.model.sensor.SensorMovimientoRequest;
-import io.teamsgroup.caso_1_programacion_concurrente.model.sensor.SensorTemperaturaRequest;
 import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorAccesoService;
 import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorMovimientoService;
 import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorTemperaturaService;
@@ -13,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/sensores")
 public class SensorController {
@@ -30,21 +26,19 @@ public class SensorController {
         this.sensorTemperaturaService = sensorTemperaturaService;
     }
 
-    @PostMapping("/sensoresTemperatura")
-    public ResponseEntity<List<SensorTemperaturaDTO>> getAllSensoresTemperatura(@RequestBody SensorTemperaturaRequest request) {
-        return ResponseEntity.ok(sensorTemperaturaService.findAll(request.getToken()));
+    // Cambio de @PostMapping a @GetMapping y uso de @RequestParam para recibir el token
+    @GetMapping("/sensoresTemperatura")
+    public ResponseEntity<List<SensorTemperaturaDTO>> getAllSensoresTemperatura(@RequestParam String token) {
+        return ResponseEntity.ok(sensorTemperaturaService.findAll(token));
     }
 
-    @PostMapping("/sensoresMovimiento")
-    public ResponseEntity<List<SensorMovimientoDTO>> getAllSensoresMovimiento(@RequestBody SensorMovimientoRequest request) {
-        return ResponseEntity.ok(sensorMovimientoService.findAll(request.getToken()));
+    @GetMapping("/sensoresMovimiento")
+    public ResponseEntity<List<SensorMovimientoDTO>> getAllSensoresMovimiento(@RequestParam String token) {
+        return ResponseEntity.ok(sensorMovimientoService.findAll(token));
     }
 
-    @PostMapping("/sensoresAcceso")
-    public ResponseEntity<List<SensorAccesoDTO>> getAllSensoresAcceso(@RequestBody SensorAccesoRequest request) {
-        return ResponseEntity.ok(sensorAccesoService.findAll(request.getToken()));
+    @GetMapping("/sensoresAcceso")
+    public ResponseEntity<List<SensorAccesoDTO>> getAllSensoresAcceso(@RequestParam String token) {
+        return ResponseEntity.ok(sensorAccesoService.findAll(token));
     }
 }
-
-
-

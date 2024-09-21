@@ -4,11 +4,12 @@ import { getAllSensorTemperaturas } from '../../services/sensorTemperaturaServic
 export default function SensorTemperaturaList() {
     const [sensors, setSensors] = useState([]);
     const [error, setError] = useState('');
+    const temperaturaToken = 'TOKEN_TEMPERATURA_Sensor de Temperatura'; // Token definido
 
     useEffect(() => {
         const fetchSensors = async () => {
             try {
-                const response = await getAllSensorTemperaturas();
+                const response = await getAllSensorTemperaturas(temperaturaToken);
                 setSensors(response);
             } catch (err) {
                 setError('Failed to fetch temperature sensors.');

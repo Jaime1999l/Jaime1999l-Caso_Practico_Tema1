@@ -12,6 +12,7 @@ export default function EventList() {
                 setEvents(response);
             } catch (err) {
                 setError('Failed to fetch events.');
+                console.error('Error fetching events:', err);
             }
         };
         fetchEvents();
@@ -33,4 +34,6 @@ export default function EventList() {
         </div>
     );
 }
+
+
 

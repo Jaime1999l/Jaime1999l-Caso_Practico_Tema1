@@ -5,7 +5,6 @@ import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorMovimiento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorAcceso;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorTemperatura;
 import io.teamsgroup.caso_1_programacion_concurrente.model.EventoDTO;
-import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.EventoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorMovimientoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorAccesoRepository;
@@ -20,7 +19,6 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 public class EventoService {
@@ -265,6 +263,15 @@ public class EventoService {
 
     public void detenerGeneracionEventos() {
         scheduler.shutdown();
+    }
+    public List<EventoDTO> obtenerEventosTemperatura() {
+        List<Evento> eventos = eventoRepository.findAll();
+        List<Evento> eventosTemperatura = eventos.stream()
+                .filter(evento -> evento.getEventosTemperatura() != null)
+                .toList();
+        return eventosTemperatura.stream()
+                .map(evento -> mapToDTO(evento, new EventoDTO()))
+                .toList();
     }
 }
 

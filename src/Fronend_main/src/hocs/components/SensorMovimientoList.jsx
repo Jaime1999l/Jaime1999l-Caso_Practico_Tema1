@@ -4,11 +4,12 @@ import { getAllSensorMovimientos } from '../../services/sensorMovimientoService/
 export default function SensorMovimientoList() {
     const [sensors, setSensors] = useState([]);
     const [error, setError] = useState('');
+    const movimientoToken = 'TOKEN_MOVIMIENTO_Sensor de Movimiento'; // Token definido
 
     useEffect(() => {
         const fetchSensors = async () => {
             try {
-                const response = await getAllSensorMovimientos();
+                const response = await getAllSensorMovimientos(movimientoToken);
                 setSensors(response);
             } catch (err) {
                 setError('Failed to fetch movement sensors.');
@@ -33,4 +34,5 @@ export default function SensorMovimientoList() {
         </div>
     );
 }
+
 

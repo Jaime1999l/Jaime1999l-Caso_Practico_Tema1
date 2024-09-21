@@ -18,9 +18,15 @@ public class EventoController {
         this.eventoService = eventoService;
     }
 
-    @PostMapping("/events_1")
-    public ResponseEntity<List<EventoDTO>> getAllEventos(@RequestBody EventoRequest request) {
-        return ResponseEntity.ok(eventoService.findAll(request.getToken()));
+    @GetMapping("/events_1")
+    public ResponseEntity<List<EventoDTO>> getAllEventos() {
+        List<EventoDTO> eventos = eventoService.getAllEventos();
+        return ResponseEntity.ok(eventos);
+    }
+    @GetMapping("/events_2")
+    public ResponseEntity<List<EventoDTO>> getEventoTemperatura() {
+        List<EventoDTO> eventos = eventoService.obtenerEventosTemperatura();
+        return ResponseEntity.ok(eventos);
     }
 }
 

@@ -34,10 +34,13 @@ public class SensorTemperaturaService {
     }
 
     public List<SensorTemperaturaDTO> findAll(String token) {
-        List<SensorTemperatura> sensorAccesos = sensorTemperaturaRepository.findAll(Sort.by("id"));
+        List<SensorTemperatura> sensorTemperaturas = sensorTemperaturaRepository.findAll(Sort.by("id"));
+
+        System.out.println("List of all sensors: " + sensorTemperaturas.size()); // Verificar cuántos sensores se cargaron
+        System.out.println("Searching sensors with token: " + token); // Verificar el token buscado
 
         // Filtrar los sensores que tienen el token proporcionado
-        List<SensorTemperatura> sensoresConToken = sensorAccesos.stream()
+        List<SensorTemperatura> sensoresConToken = sensorTemperaturas.stream()
                 .filter(sensor -> sensor.getToken().equals(token))
                 .toList();
 
