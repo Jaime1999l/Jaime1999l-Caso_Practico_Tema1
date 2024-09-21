@@ -1,8 +1,10 @@
 package io.teamsgroup.caso_1_programacion_concurrente.service.sensor;
 
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Evento;
+import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorMovimiento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorTemperatura;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Usuario;
+import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorTemperaturaDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.EventoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorTemperaturaRepository;
@@ -14,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SensorTemperaturaService {
@@ -30,12 +33,25 @@ public class SensorTemperaturaService {
         this.eventoRepository = eventoRepository;
     }
 
-    public List<SensorTemperaturaDTO> findAll() {
-        final List<SensorTemperatura> sensoresTemperatura = sensorTemperaturaRepository.findAll(Sort.by("id"));
-        return sensoresTemperatura.stream()
-                .map(sensorTemperatura -> mapToDTO(sensorTemperatura, new SensorTemperaturaDTO()))
+    public List<SensorTemperaturaDTO> findAll(String token) {
+        List<SensorTemperatura> sensorAccesos = sensorTemperaturaRepository.findAll(Sort.by("id"));
+
+        // Filtrar los sensores que tienen el token proporcionado
+        List<SensorTemperatura> sensoresConToken = sensorAccesos.stream()
+                .filter(sensor -> sensor.getToken().equals(token))
+                .toList();
+
+        // Si no hay sensores con el token, lanzar excepción
+        if (sensoresConToken.isEmpty()) {
+            System.out.println("Token inválido para sensores de temperatura."); // Muestra mensaje en consola
+        }
+
+        // Convertir los sensores filtrados a DTO
+        return sensoresConToken.stream()
+                .map(sensorAcceso -> mapToDTO(sensorAcceso, new SensorTemperaturaDTO()))
                 .toList();
     }
+
 
     public SensorTemperaturaDTO get(final Integer id) {
         return sensorTemperaturaRepository.findById(id)
@@ -48,7 +64,7 @@ public class SensorTemperaturaService {
         sensorTemperatura.setNombre(sensorTemperaturaDTO.getNombre());
         sensorTemperatura.setDatosTemperatura(sensorTemperaturaDTO.getDatosTemperatura());
         sensorTemperatura.setNotificacion(sensorTemperaturaDTO.getNotificacion());
-        sensorTemperatura.setToken("TOKEN_TEMPERATURA_" + sensorTemperaturaDTO.getNombre()); // Genera un token único
+        sensorTemperatura.setToken(sensorTemperaturaDTO.getToken());
         System.out.println("Token generado para Sensor de Temperatura: " + sensorTemperatura.getToken()); // Muestra el token en consola
         return sensorTemperaturaRepository.save(sensorTemperatura).getId();
     }
@@ -57,7 +73,7 @@ public class SensorTemperaturaService {
         final SensorTemperatura sensorTemperatura = sensorTemperaturaRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(sensorTemperaturaDTO, sensorTemperatura);
-        sensorTemperatura.setToken(generateToken("TEMPERATURA", sensorTemperatura.getNombre()));
+        sensorTemperatura.setToken(generateToken("TEMPERATURA"));
         sensorTemperaturaRepository.save(sensorTemperatura);
     }
 
@@ -107,8 +123,8 @@ public class SensorTemperaturaService {
         return null;
     }
 
-    // Generador simple de tokens basados en el tipo de sensor y su nombre
-    private String generateToken(String tipo, String nombre) {
-        return tipo + "_" + nombre + "_" + System.currentTimeMillis();
+    private String generateToken(String tipo) {
+        // Genera un token genérico sin el nombre específico del sensor
+        return tipo + "_Sensor";
     }
 }

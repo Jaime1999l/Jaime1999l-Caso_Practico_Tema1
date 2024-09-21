@@ -2,6 +2,7 @@ package io.teamsgroup.caso_1_programacion_concurrente.rest;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.teamsgroup.caso_1_programacion_concurrente.model.EventoDTO;
+import io.teamsgroup.caso_1_programacion_concurrente.model.sensor.EventoRequest;
 import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,11 @@ public class EventoResource {
         this.eventoService = eventoService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<EventoDTO>> getAllEventos(@RequestHeader("Authorization") String token) {
-        List<EventoDTO> eventos = eventoService.findAll();
-        return ResponseEntity.ok(eventos);
+    @PostMapping("/events")
+    @ApiResponse(responseCode = "200", description = "Get all events")
+    public ResponseEntity<List<EventoDTO>> getAllEventos(@RequestBody EventoRequest request) {
+        // Pasar el token proporcionado en el cuerpo de la solicitud al método findAll
+        return ResponseEntity.ok(eventoService.findAll(request.getToken()));
     }
 
     @GetMapping("/{id}")

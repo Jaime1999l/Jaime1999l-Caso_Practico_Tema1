@@ -25,7 +25,7 @@ export default function SensorAccesoList() {
                 <ul>
                     {sensors.map((sensor) => (
                         <li key={sensor.id}>
-                            {sensor.nombre} - {sensor.datosAcceso} - {sensor.respuesta}
+                            {sensor.nombre} - {sensor.datosAcceso} - {sensor.respuesta ? 'Permitido' : 'Denegado'} - Token: {sensor.token}
                         </li>
                     ))}
                 </ul>
@@ -33,4 +33,5 @@ export default function SensorAccesoList() {
         </div>
     );
 }
+
 

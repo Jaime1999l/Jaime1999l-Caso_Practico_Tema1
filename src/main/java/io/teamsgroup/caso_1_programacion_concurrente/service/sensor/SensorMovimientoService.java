@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SensorMovimientoService {
@@ -30,12 +31,28 @@ public class SensorMovimientoService {
         this.eventoRepository = eventoRepository;
     }
 
-    public List<SensorMovimientoDTO> findAll() {
-        final List<SensorMovimiento> sensorMovimientos = sensorMovimientoRepository.findAll(Sort.by("id"));
-        return sensorMovimientos.stream()
-                .map(sensorMovimiento -> mapToDTO(sensorMovimiento, new SensorMovimientoDTO()))
+    public List<SensorMovimientoDTO> findAll(String token) {
+        List<SensorMovimiento> sensorMovimientos = sensorMovimientoRepository.findAll(Sort.by("id"));
+
+        // Verificar el token proporcionado
+        boolean tokenValido = sensorMovimientos.stream()
+                .anyMatch(sensor -> sensor.getToken().equals(token));
+
+        // Si el token no coincide con ninguno de los sensores, se lanza excepción
+        if (!tokenValido) {
+            System.out.println("Token inválido para sensores de movimiento."); // Muestra mensaje en consola
+        }
+
+        // Filtrar los sensores que coinciden con el token proporcionado
+        List<SensorMovimiento> sensoresConToken = sensorMovimientos.stream()
+                .filter(sensor -> sensor.getToken().equals(token))
+                .toList();
+
+        return sensoresConToken.stream()
+                .map(sensor -> mapToDTO(sensor, new SensorMovimientoDTO()))
                 .toList();
     }
+
 
     public SensorMovimientoDTO get(final Integer id) {
         return sensorMovimientoRepository.findById(id)
@@ -48,7 +65,7 @@ public class SensorMovimientoService {
         sensorMovimiento.setNombre(sensorMovimientoDTO.getNombre());
         sensorMovimiento.setDatosMovimiento(sensorMovimientoDTO.getDatosMovimiento());
         sensorMovimiento.setNotificacion(sensorMovimientoDTO.getNotificacion());
-        sensorMovimiento.setToken("TOKEN_MOVIMIENTO_" + sensorMovimientoDTO.getNombre()); // Genera un token único
+        sensorMovimiento.setToken(sensorMovimientoDTO.getToken());
         System.out.println("Token generado para Sensor de Movimiento: " + sensorMovimiento.getToken()); // Muestra el token en consola
         return sensorMovimientoRepository.save(sensorMovimiento).getId();
     }
@@ -57,7 +74,7 @@ public class SensorMovimientoService {
         final SensorMovimiento sensorMovimiento = sensorMovimientoRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(sensorMovimientoDTO, sensorMovimiento);
-        sensorMovimiento.setToken(generateToken("MOVIMIENTO", sensorMovimiento.getNombre()));
+        sensorMovimiento.setToken(generateToken("MOVIMIENTO"));
         sensorMovimientoRepository.save(sensorMovimiento);
     }
 
@@ -107,8 +124,8 @@ public class SensorMovimientoService {
         return null;
     }
 
-    // Generador simple de tokens basados en el tipo de sensor y su nombre
-    private String generateToken(String tipo, String nombre) {
-        return tipo + "_" + nombre + "_" + System.currentTimeMillis();
+    private String generateToken(String tipo) {
+        // Genera un token genérico sin el nombre específico del sensor
+        return tipo + "_Sensor";
     }
 }

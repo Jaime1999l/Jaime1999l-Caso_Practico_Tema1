@@ -25,7 +25,7 @@ export default function SensorTemperaturaList() {
                 <ul>
                     {sensors.map((sensor) => (
                         <li key={sensor.id}>
-                            {sensor.nombre} - {sensor.datosTemperatura}
+                            {sensor.nombre} - {sensor.datosTemperatura} - Token: {sensor.token}
                         </li>
                     ))}
                 </ul>
@@ -33,4 +33,5 @@ export default function SensorTemperaturaList() {
         </div>
     );
 }
+
 

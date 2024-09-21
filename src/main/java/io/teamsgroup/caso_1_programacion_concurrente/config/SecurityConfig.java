@@ -20,6 +20,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/**/**").permitAll()
+                        .requestMatchers("/api/sensores/**").permitAll()
+                        .requestMatchers("/api/eventos/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .cors(withDefaults()) // CORS

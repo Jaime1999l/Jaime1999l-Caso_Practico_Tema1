@@ -1,18 +1,13 @@
-const API_BASE_URL = 'http://localhost:8080/api';
-
-// Obtener el token de autenticación desde el localStorage
-const token = localStorage.getItem('token');
-
-// Función para obtener todos los eventos
 export async function getAllEventos() {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}/eventos/events`, {
-            method: 'GET',
+        const response = await fetch(`${API_BASE_URL}/eventos/events_1`, {
+            method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`, // Incluyendo el token en la solicitud
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ token }) // Enviar el token en el cuerpo también, si es necesario
         });
 
         if (!response.ok) {
@@ -27,5 +22,7 @@ export async function getAllEventos() {
         throw error;
     }
 }
+
+
 
 

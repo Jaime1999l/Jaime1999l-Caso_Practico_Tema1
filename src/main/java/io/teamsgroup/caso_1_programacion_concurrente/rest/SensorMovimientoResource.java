@@ -2,7 +2,10 @@ package io.teamsgroup.caso_1_programacion_concurrente.rest;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
+import io.teamsgroup.caso_1_programacion_concurrente.model.sensor.SensorMovimientoRequest;
 import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorMovimientoService;
+import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedException;
+import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedWarning;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +22,11 @@ public class SensorMovimientoResource {
         this.sensorMovimientoService = sensorMovimientoService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<SensorMovimientoDTO>> getAllSensorMovimientos(@RequestHeader("Authorization") String token) {
-        List<SensorMovimientoDTO> sensores = sensorMovimientoService.findAll();
-        return ResponseEntity.ok(sensores);
+    @PostMapping("/sensoresMovimiento")
+    @ApiResponse(responseCode = "200", description = "Get all movement sensors")
+    public ResponseEntity<List<SensorMovimientoDTO>> getAllSensoresMovimiento(@RequestBody SensorMovimientoRequest request) {
+        // Pasar el token proporcionado en el cuerpo de la solicitud al método findAll
+        return ResponseEntity.ok(sensorMovimientoService.findAll(request.getToken()));
     }
 
     @GetMapping("/{id}")
@@ -52,6 +56,10 @@ public class SensorMovimientoResource {
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteSensorMovimiento(@PathVariable final Integer id,
                                                        @RequestHeader("Authorization") String token) {
+        final ReferencedWarning referencedWarning = sensorMovimientoService.getReferencedWarning(id);
+        if (referencedWarning != null) {
+            throw new ReferencedException(referencedWarning);
+        }
         sensorMovimientoService.delete(id);
         return ResponseEntity.noContent().build();
     }

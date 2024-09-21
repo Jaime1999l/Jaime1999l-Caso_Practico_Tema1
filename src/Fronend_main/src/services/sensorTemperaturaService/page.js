@@ -1,14 +1,10 @@
 const API_BASE_URL = 'http://localhost:8080/api';
 
-const token = localStorage.getItem('token');
-
 export async function getAllSensorTemperaturas() {
     try {
-        const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE_URL}/sensores/sensoresTemperatura`, {
-            method: 'GET',
+            method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`, // Incluyendo el token en la solicitud
                 'Content-Type': 'application/json'
             }
         });
@@ -25,4 +21,7 @@ export async function getAllSensorTemperaturas() {
         throw error;
     }
 }
+
+
+
 

@@ -1,16 +1,10 @@
 const API_BASE_URL = 'http://localhost:8080/api';
 
-// Obtener el token de autenticación desde el localStorage
-const token = localStorage.getItem('token');
-
-// Función para obtener todos los sensores de movimiento
 export async function getAllSensorMovimientos() {
     try {
-        const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE_URL}/sensores/sensoresMovimiento`, {
-            method: 'GET',
+            method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`, // Incluyendo el token en la solicitud
                 'Content-Type': 'application/json'
             }
         });
@@ -27,3 +21,6 @@ export async function getAllSensorMovimientos() {
         throw error;
     }
 }
+
+
+

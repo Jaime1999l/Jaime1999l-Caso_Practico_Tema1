@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllEvents } from '../../services/eventService/page';
+import { getAllEventos } from '../../services/eventService/page';
 
 export default function EventList() {
     const [events, setEvents] = useState([]);
@@ -8,7 +8,7 @@ export default function EventList() {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await getAllEvents();
+                const response = await getAllEventos();
                 setEvents(response);
             } catch (err) {
                 setError('Failed to fetch events.');
@@ -25,7 +25,7 @@ export default function EventList() {
                 <ul>
                     {events.map((event) => (
                         <li key={event.id}>
-                            {event.nombre} - {event.datos}
+                            {event.nombre} - {event.datos} - Token: {event.token}
                         </li>
                     ))}
                 </ul>
@@ -33,3 +33,4 @@ export default function EventList() {
         </div>
     );
 }
+

@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
@@ -40,38 +41,35 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
         // Limpiar la base de datos
         limpiarBaseDeDatos();
 
-        // Registro de un nuevo usuario admin y user
+        // Registro de usuarios
         registrarNuevoUsuario(
-                "Administrador", "Ap", "Ap2", "admin@example.com", 123456789,
-                "Calle Concurrente 123", "12345", "admin"
+                "Administrador", "Apellido1", "Apellido2", "admin@example.com", 123456789,
+                "Calle Principal 123", "12345", "admin"
         );
 
         registrarNuevoUsuario(
-                "Usuario", "Ap1", "Ap12", "usuario@example.com", 987654321,
-                "Calle Evento 123", "12345", "user"
+                "Usuario", "Apellido1", "Apellido2", "usuario@example.com", 987654321,
+                "Calle Secundaria 456", "12345", "user"
         );
 
-        System.out.println("Usuarios registrados exitosamente.");
-
-        // Mostrar los usuarios registrados
         mostrarUsuarios();
 
-        System.out.println("\nIniciando creación de sensores...\n");
-
-        // Crear sensores
+        // Crear sensores con los tokens generados
         crearSensoresMovimiento();
         crearSensoresAcceso();
         crearSensoresTemperatura();
 
-        System.out.println("Sensores creados correctamente.");
-
-        // Mostrar sensores creados
+        // Mostrar sensores usando los tokens generados
         mostrarSensores();
 
         // Generar eventos concurrentes
         eventoService.iniciarGeneracionEventosConcurrentes();
-        TimeUnit.MINUTES.sleep(15); // Ajustar el tiempo de ejecución según sea necesario
+        TimeUnit.MINUTES.sleep(5);
         eventoService.detenerGeneracionEventos();
+
+        System.out.println("Caso de uso finalizado.");
+        System.out.println("Eventos generados: ");
+        mostrarTodosLosEventos();
     }
 
     private void mostrarUsuarios() {
@@ -82,29 +80,36 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
         }
     }
 
-    /**
-     * Limpiar la base de datos eliminando eventos y sensores.
-     */
     private void limpiarBaseDeDatos() {
         System.out.println("Limpiando base de datos...");
 
         // Eliminar todos los eventos
         eventoService.deleteAll();
 
-        // Eliminar todos los sensores de movimiento
-        sensorMovimientoService.findAll().forEach(sensor -> sensorMovimientoService.delete(sensor.getId()));
+        // Eliminar sensores de movimiento
+        for (int i = 1; i <= 5; i++) {
+            String tokenMovimiento = generatePredictableToken("TOKEN_MOVIMIENTO", i);
+            sensorMovimientoService.findAll(tokenMovimiento).forEach(sensor -> sensorMovimientoService.delete(sensor.getId()));
+        }
 
-        // Eliminar todos los sensores de acceso
-        sensorAccesoService.findAll().forEach(sensor -> sensorAccesoService.delete(sensor.getId()));
+        // Eliminar sensores de acceso
+        for (int i = 1; i <= 5; i++) {
+            String tokenAcceso = generatePredictableToken("TOKEN_ACCESO", i);
+            sensorAccesoService.findAll(tokenAcceso).forEach(sensor -> sensorAccesoService.delete(sensor.getId()));
+        }
 
-        // Eliminar todos los sensores de temperatura
-        sensorTemperaturaService.findAll().forEach(sensor -> sensorTemperaturaService.delete(sensor.getId()));
+        // Eliminar sensores de temperatura
+        for (int i = 1; i <= 5; i++) {
+            String tokenTemperatura = generatePredictableToken("TOKEN_TEMPERATURA", i);
+            sensorTemperaturaService.findAll(tokenTemperatura).forEach(sensor -> sensorTemperaturaService.delete(sensor.getId()));
+        }
 
         // Eliminar todos los usuarios
         usuarioService.findAll().forEach(usuario -> usuarioService.delete(usuario.getId()));
 
         System.out.println("Base de datos vaciada.\n");
     }
+
 
     /**
      * Registra un nuevo usuario en la base de datos y devuelve un token.
@@ -119,8 +124,8 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
      * @param rolNombre  Rol del usuario (admin/user).
      * @return Token del usuario registrado.
      */
-    private void registrarNuevoUsuario(String nombre, String apellido1, String apellido2, String correo,
-                                       int telefono, String direccion, String contrasena, String rolNombre) {
+    private String registrarNuevoUsuario(String nombre, String apellido1, String apellido2, String correo,
+                                         int telefono, String direccion, String contrasena, String rolNombre) {
 
         // Crear el objeto RegisterRequest con la información del usuario
         RegisterRequest registerRequest = new RegisterRequest();
@@ -137,24 +142,27 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
         authService.register(registerRequest, rolNombre);
 
         System.out.println("Usuario registrado con nombre: " + nombre + " y rol: " + rolNombre);
+
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setCorreo(correo);
+        loginRequest.setContrasena(contrasena);
+
+        // Autenticación para obtener el token
+        return Objects.requireNonNull(authService.login(loginRequest).getBody()).getToken();
     }
 
-    /**
-     * Crear sensores de movimiento.
-     */
     private void crearSensoresMovimiento() {
         for (int i = 1; i <= 5; i++) {
             SensorMovimientoDTO sensorMovimientoDTO = new SensorMovimientoDTO();
             sensorMovimientoDTO.setNombre("Sensor de Movimiento " + i);
             sensorMovimientoDTO.setDatosMovimiento("Movimiento detectado en sensor " + i);
             sensorMovimientoDTO.setNotificacion(Notificacion.ACTIVADO);
+            sensorMovimientoDTO.setToken(generatePredictableToken("TOKEN_MOVIMIENTO", i)); // Token predecible
+            System.out.println("Creando sensor de movimiento con token: " + sensorMovimientoDTO.getToken());
             sensorMovimientoService.create(sensorMovimientoDTO);
         }
     }
 
-    /**
-     * Crear sensores de acceso.
-     */
     private void crearSensoresAcceso() {
         for (int i = 1; i <= 5; i++) {
             SensorAccesoDTO sensorAccesoDTO = new SensorAccesoDTO();
@@ -162,50 +170,93 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
             sensorAccesoDTO.setDatosAcceso("Acceso registrado en sensor " + i);
             sensorAccesoDTO.setRespuesta(i % 2 == 0); // Alternar acceso permitido/denegado
             sensorAccesoDTO.setNotificacion(Notificacion.ACTIVADO);
+            sensorAccesoDTO.setToken(generatePredictableToken("TOKEN_ACCESO", i)); // Token predecible
+            System.out.println("Creando sensor de acceso con token: " + sensorAccesoDTO.getToken());
             sensorAccesoService.create(sensorAccesoDTO);
         }
     }
 
-    /**
-     * Crear sensores de temperatura.
-     */
     private void crearSensoresTemperatura() {
         for (int i = 1; i <= 5; i++) {
             SensorTemperaturaDTO sensorTemperaturaDTO = new SensorTemperaturaDTO();
             sensorTemperaturaDTO.setNombre("Sensor de Temperatura " + i);
             sensorTemperaturaDTO.setDatosTemperatura(20.0 + i);
             sensorTemperaturaDTO.setNotificacion(Notificacion.ACTIVADO);
+            sensorTemperaturaDTO.setToken(generatePredictableToken("TOKEN_TEMPERATURA", i)); // Token predecible
+            System.out.println("Creando sensor de temperatura con token: " + sensorTemperaturaDTO.getToken());
             sensorTemperaturaService.create(sensorTemperaturaDTO);
         }
     }
 
+
     /**
      * Mostrar todos los sensores creados en la base de datos.
      */
+    /**
+     * Mostrar todos los sensores creados en la base de datos usando tokens predecibles.
+     */
     private void mostrarSensores() {
+        System.out.println("Mostrando sensores creados:");
+
         // Mostrar Sensores de Movimiento
-        List<SensorMovimientoDTO> sensoresMovimiento = sensorMovimientoService.findAll();
-        System.out.println("\nSensores de Movimiento Creados:");
-        for (SensorMovimientoDTO sensor : sensoresMovimiento) {
-            System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() + ", Datos: " + sensor.getDatosMovimiento());
+        for (int i = 1; i <= 5; i++) {
+            String tokenMovimiento = generatePredictableToken("TOKEN_MOVIMIENTO", i);
+            List<SensorMovimientoDTO> sensoresMovimiento = sensorMovimientoService.findAll(tokenMovimiento);
+            System.out.println("\nSensores de Movimiento (Token: " + tokenMovimiento + "):");
+            for (SensorMovimientoDTO sensor : sensoresMovimiento) {
+                System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() +
+                        ", Datos: " + sensor.getDatosMovimiento() + ", Token: " + sensor.getToken());
+            }
         }
 
         // Mostrar Sensores de Acceso
-        List<SensorAccesoDTO> sensoresAcceso = sensorAccesoService.findAll();
-        System.out.println("\nSensores de Acceso Creados:");
-        for (SensorAccesoDTO sensor : sensoresAcceso) {
-            System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() + ", Datos: " + sensor.getDatosAcceso() + ", Respuesta: " + (sensor.getRespuesta() ? "Permitido" : "Denegado"));
+        for (int i = 1; i <= 5; i++) {
+            String tokenAcceso = generatePredictableToken("TOKEN_ACCESO", i);
+            List<SensorAccesoDTO> sensoresAcceso = sensorAccesoService.findAll(tokenAcceso);
+            System.out.println("\nSensores de Acceso (Token: " + tokenAcceso + "):");
+            for (SensorAccesoDTO sensor : sensoresAcceso) {
+                System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() +
+                        ", Datos: " + sensor.getDatosAcceso() + ", Respuesta: " + (sensor.getRespuesta() ? "Permitido" : "Denegado") +
+                        ", Token: " + sensor.getToken());
+            }
         }
 
         // Mostrar Sensores de Temperatura
-        List<SensorTemperaturaDTO> sensoresTemperatura = sensorTemperaturaService.findAll();
-        System.out.println("\nSensores de Temperatura Creados:");
-        for (SensorTemperaturaDTO sensor : sensoresTemperatura) {
-            System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() + ", Temperatura: " + sensor.getDatosTemperatura());
+        for (int i = 1; i <= 5; i++) {
+            String tokenTemperatura = generatePredictableToken("TOKEN_TEMPERATURA", i);
+            List<SensorTemperaturaDTO> sensoresTemperatura = sensorTemperaturaService.findAll(tokenTemperatura);
+            System.out.println("\nSensores de Temperatura (Token: " + tokenTemperatura + "):");
+            for (SensorTemperaturaDTO sensor : sensoresTemperatura) {
+                System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() +
+                        ", Temperatura: " + sensor.getDatosTemperatura() + ", Token: " + sensor.getToken());
+            }
+        }
+    }
+
+
+    private String generatePredictableToken(String tipo, int index) {
+        // El token se genera utilizando un patrón fijo basado en el tipo y el índice.
+        return tipo + "_Sensor_" + index;
+    }
+
+    private void mostrarTodosLosEventos() {
+        System.out.println("\nEventos Registrados:");
+        List<EventoDTO> eventos = eventoService.getAllEventos();
+        if (eventos.isEmpty()) {
+            System.out.println("No hay eventos registrados.");
+        } else {
+            for (EventoDTO evento : eventos) {
+                System.out.println("ID: " + evento.getId() + ", Nombre: " + evento.getNombre() +
+                        ", Datos: " + evento.getDatos() + ", Token: " + evento.getToken() +
+                        ", Sensor Movimiento ID: " + evento.getEventosMovimiento() +
+                        ", Sensor Acceso ID: " + evento.getEventosAcceso() +
+                        ", Sensor Temperatura ID: " + evento.getEventosTemperatura());
+            }
         }
     }
 
 }
+
 
 
 

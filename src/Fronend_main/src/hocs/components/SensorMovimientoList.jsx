@@ -25,7 +25,7 @@ export default function SensorMovimientoList() {
                 <ul>
                     {sensors.map((sensor) => (
                         <li key={sensor.id}>
-                            {sensor.nombre} - {sensor.datosMovimiento}
+                            {sensor.nombre} - {sensor.datosMovimiento} - Token: {sensor.token}
                         </li>
                     ))}
                 </ul>

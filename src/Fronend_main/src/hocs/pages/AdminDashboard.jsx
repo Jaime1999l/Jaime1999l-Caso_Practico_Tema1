@@ -1,8 +1,7 @@
-// src/hocs/pages/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
-import {getAllSensorMovimientos} from "../../services/sensorMovimientoService/page";
-import {getAllSensorAccesos} from "../../services/sensorAccesoService/page";
-import {getAllSensorTemperaturas} from "../../services/sensorTemperaturaService/page";
+import { getAllSensorMovimientos } from "../../services/sensorMovimientoService/page";
+import { getAllSensorAccesos } from "../../services/sensorAccesoService/page";
+import { getAllSensorTemperaturas } from "../../services/sensorTemperaturaService/page";
 import { getAllEventos } from '../../services/eventService/page';
 import UserRegisterForm from '../components/UserRegisterForm';
 
@@ -75,7 +74,7 @@ export default function AdminDashboard() {
                 {movementSensors.length > 0 ? (
                     <ul>
                         {movementSensors.map(sensor => (
-                            <li key={sensor.id}>{sensor.nombre}</li>
+                            <li key={sensor.id}>{sensor.nombre} - Token: {sensor.token}</li>
                         ))}
                     </ul>
                 ) : (
@@ -88,7 +87,7 @@ export default function AdminDashboard() {
                 {accessSensors.length > 0 ? (
                     <ul>
                         {accessSensors.map(sensor => (
-                            <li key={sensor.id}>{sensor.nombre}</li>
+                            <li key={sensor.id}>{sensor.nombre} - Token: {sensor.token}</li>
                         ))}
                     </ul>
                 ) : (
@@ -101,7 +100,7 @@ export default function AdminDashboard() {
                 {temperatureSensors.length > 0 ? (
                     <ul>
                         {temperatureSensors.map(sensor => (
-                            <li key={sensor.id}>{sensor.nombre}</li>
+                            <li key={sensor.id}>{sensor.nombre} - Token: {sensor.token}</li>
                         ))}
                     </ul>
                 ) : (
@@ -114,7 +113,7 @@ export default function AdminDashboard() {
                 {events.length > 0 ? (
                     <ul>
                         {events.map(event => (
-                            <li key={event.id}>{event.nombre}</li>
+                            <li key={event.id}>{event.nombre} - Token: {event.token}</li>
                         ))}
                     </ul>
                 ) : (
@@ -124,4 +123,5 @@ export default function AdminDashboard() {
         </div>
     );
 }
+
 

@@ -5,6 +5,7 @@ import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorMovimiento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorAcceso;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorTemperatura;
 import io.teamsgroup.caso_1_programacion_concurrente.model.EventoDTO;
+import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.EventoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorMovimientoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorAccesoRepository;
@@ -19,6 +20,7 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class EventoService {
@@ -41,12 +43,25 @@ public class EventoService {
         this.sensorAccesoRepository = sensorAccesoRepository;
     }
 
-    public List<EventoDTO> findAll() {
-        final List<Evento> eventoes = eventoRepository.findAll(Sort.by("id"));
-        return eventoes.stream()
-                .map(evento -> mapToDTO(evento, new EventoDTO()))
+    public List<EventoDTO> findAll(String token) {
+        List<Evento> eventos = eventoRepository.findAll(Sort.by("id"));
+
+        // Filtrar los sensores que tienen el token proporcionado
+        List<Evento> eventos1 = eventos.stream()
+                .filter(sensor -> sensor.getToken().equals(token))
+                .toList();
+
+        // Si no hay sensores con el token, lanzar excepción
+        if (eventos1.isEmpty()) {
+            System.out.println("Token inválido para eventos.");
+        }
+
+        // Convertir los sensores filtrados a DTO
+        return eventos1.stream()
+                .map(sensorAcceso -> mapToDTO(sensorAcceso, new EventoDTO()))
                 .toList();
     }
+
 
     public EventoDTO get(final Integer id) {
         return eventoRepository.findById(id)
@@ -90,10 +105,11 @@ public class EventoService {
 
 
     public void update(final Integer id, final EventoDTO eventoDTO) {
+
         final Evento evento = eventoRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(eventoDTO, evento);
-        evento.setToken(generateToken("EVENTO", evento.getNombre()));
+        evento.setToken(generateUniqueToken("ACCESO", id));
         eventoRepository.save(evento);
     }
 
@@ -157,9 +173,14 @@ public class EventoService {
             evento.setDateCreated(OffsetDateTime.now());
             evento.setLastUpdated(OffsetDateTime.now());
             evento.setEventosMovimiento(sensor);
-            evento.setToken(generateToken("MOVIMIENTO", evento.getNombre()));
+
+            // Generar un token único para el evento
+            String token = generateUniqueToken("MOVIMIENTO", sensor.getId());
+            evento.setToken(token);
+
             eventoRepository.save(evento);
             System.out.println("Evento generado (Movimiento): " + evento.getNombre() + " - Sensor ID: " + sensor.getId());
+            System.out.println("Token generado para evento de movimiento: " + evento.getToken());
         } catch (Exception e) {
             System.err.println("Error al generar evento de movimiento: " + e.getMessage());
         }
@@ -181,9 +202,14 @@ public class EventoService {
             evento.setDateCreated(OffsetDateTime.now());
             evento.setLastUpdated(OffsetDateTime.now());
             evento.setEventosTemperatura(sensor);
-            evento.setToken(generateToken("TEMPERATURA", evento.getNombre()));
+
+            // Generar un token único para el evento
+            String token = generateUniqueToken("TEMPERATURA", sensor.getId());
+            evento.setToken(token);
+
             eventoRepository.save(evento);
             System.out.println("Evento generado (Temperatura): " + evento.getNombre() + " - Sensor ID: " + sensor.getId());
+            System.out.println("Token generado para evento de temperatura: " + evento.getToken());
         } catch (Exception e) {
             System.err.println("Error al generar evento de temperatura: " + e.getMessage());
         }
@@ -205,17 +231,32 @@ public class EventoService {
             evento.setDateCreated(OffsetDateTime.now());
             evento.setLastUpdated(OffsetDateTime.now());
             evento.setEventosAcceso(sensor);
-            evento.setToken(generateToken("ACCESO", evento.getNombre()));
+
+            // Generar un token único para el evento
+            String token = generateUniqueToken("ACCESO", sensor.getId());
+            evento.setToken(token);
+
             eventoRepository.save(evento);
             System.out.println("Evento generado (Acceso): " + evento.getNombre() + " - Sensor ID: " + sensor.getId());
+            System.out.println("Token generado para evento de acceso: " + evento.getToken());
         } catch (Exception e) {
             System.err.println("Error al generar evento de acceso: " + e.getMessage());
         }
     }
 
+    private String generateUniqueToken(String tipo, int sensorId) {
+        return tipo + "_Sensor_" + sensorId + "_" + System.currentTimeMillis();
+    }
+
     public void deleteAll() {
         eventoRepository.deleteAll();
         System.out.println("Todos los eventos han sido eliminados.");
+    }
+
+    public List<EventoDTO> getAllEventos() {
+        return eventoRepository.findAll(Sort.by("id")).stream()
+                .map(evento -> mapToDTO(evento, new EventoDTO()))
+                .toList();
     }
 
     private int getRandomInterval() {
@@ -224,11 +265,6 @@ public class EventoService {
 
     public void detenerGeneracionEventos() {
         scheduler.shutdown();
-    }
-
-    // Generador simple de tokens basados en el tipo de evento y su nombre
-    private String generateToken(String tipo, String nombre) {
-        return tipo + "_" + nombre + "_" + System.currentTimeMillis();
     }
 }
 

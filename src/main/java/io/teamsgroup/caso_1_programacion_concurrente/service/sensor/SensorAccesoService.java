@@ -2,8 +2,10 @@ package io.teamsgroup.caso_1_programacion_concurrente.service.sensor;
 
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Evento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorAcceso;
+import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorMovimiento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Usuario;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorAccesoDTO;
+import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.EventoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorAccesoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.UsuarioRepository;
@@ -14,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SensorAccesoService {
@@ -30,12 +33,26 @@ public class SensorAccesoService {
         this.eventoRepository = eventoRepository;
     }
 
-    public List<SensorAccesoDTO> findAll() {
-        final List<SensorAcceso> sensorAccesos = sensorAccesoRepository.findAll(Sort.by("id"));
-        return sensorAccesos.stream()
+    public List<SensorAccesoDTO> findAll(String token) {
+        List<SensorAcceso> sensorAccesos = sensorAccesoRepository.findAll(Sort.by("id"));
+
+        // Filtrar los sensores que tienen el token proporcionado
+        List<SensorAcceso> sensoresConToken = sensorAccesos.stream()
+                .filter(sensor -> sensor.getToken().equals(token))
+                .toList();
+
+        // Si no hay sensores con el token, lanzar excepción
+        if (sensoresConToken.isEmpty()) {
+            System.out.println("Token inválido para sensores de acceso."); // Muestra mensaje en consola
+        }
+
+        // Convertir los sensores filtrados a DTO
+        return sensoresConToken.stream()
                 .map(sensorAcceso -> mapToDTO(sensorAcceso, new SensorAccesoDTO()))
                 .toList();
     }
+
+
 
     public SensorAccesoDTO get(final Integer id) {
         return sensorAccesoRepository.findById(id)
@@ -49,7 +66,7 @@ public class SensorAccesoService {
         sensorAcceso.setDatosAcceso(sensorAccesoDTO.getDatosAcceso());
         sensorAcceso.setNotificacion(sensorAccesoDTO.getNotificacion());
         sensorAcceso.setRespuesta(sensorAccesoDTO.getRespuesta());
-        sensorAcceso.setToken("TOKEN_ACCESO_" + sensorAccesoDTO.getNombre()); // Genera un token único
+        sensorAcceso.setToken(sensorAccesoDTO.getToken());
         System.out.println("Token generado para Sensor de Acceso: " + sensorAcceso.getToken()); // Muestra el token en consola
         return sensorAccesoRepository.save(sensorAcceso).getId();
     }
@@ -60,7 +77,7 @@ public class SensorAccesoService {
         final SensorAcceso sensorAcceso = sensorAccesoRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(sensorAccesoDTO, sensorAcceso);
-        sensorAcceso.setToken(generateToken("ACCESO", sensorAcceso.getNombre()));
+        sensorAcceso.setToken(generateToken("ACCESO"));
         sensorAccesoRepository.save(sensorAcceso);
     }
 
@@ -112,8 +129,8 @@ public class SensorAccesoService {
         return null;
     }
 
-    // Generador simple de tokens basados en el tipo de sensor y su nombre
-    private String generateToken(String tipo, String nombre) {
-        return tipo + "_" + nombre + "_" + System.currentTimeMillis();
+    private String generateToken(String tipo) {
+        // Genera un token genérico sin el nombre específico del sensor
+        return tipo + "_Sensor";
     }
 }

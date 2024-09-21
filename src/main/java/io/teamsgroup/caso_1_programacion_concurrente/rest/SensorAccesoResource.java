@@ -2,6 +2,7 @@ package io.teamsgroup.caso_1_programacion_concurrente.rest;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorAccesoDTO;
+import io.teamsgroup.caso_1_programacion_concurrente.model.sensor.SensorAccesoRequest;
 import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorAccesoService;
 import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedException;
 import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedWarning;
@@ -23,9 +24,11 @@ public class SensorAccesoResource {
         this.sensorAccesoService = sensorAccesoService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<SensorAccesoDTO>> getAllSensorAccesos() {
-        return ResponseEntity.ok(sensorAccesoService.findAll());
+    @PostMapping("/sensoresAcceso")
+    @ApiResponse(responseCode = "200", description = "Get all access sensors")
+    public ResponseEntity<List<SensorAccesoDTO>> getAllSensoresAcceso(@RequestBody SensorAccesoRequest request) {
+        // Pasar el token proporcionado en el cuerpo de la solicitud al método findAll
+        return ResponseEntity.ok(sensorAccesoService.findAll(request.getToken()));
     }
 
     @GetMapping("/{id}")

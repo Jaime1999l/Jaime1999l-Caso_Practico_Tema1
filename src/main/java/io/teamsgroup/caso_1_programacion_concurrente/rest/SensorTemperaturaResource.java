@@ -2,7 +2,10 @@ package io.teamsgroup.caso_1_programacion_concurrente.rest;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorTemperaturaDTO;
+import io.teamsgroup.caso_1_programacion_concurrente.model.sensor.SensorTemperaturaRequest;
 import io.teamsgroup.caso_1_programacion_concurrente.service.sensor.SensorTemperaturaService;
+import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedException;
+import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedWarning;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +22,11 @@ public class SensorTemperaturaResource {
         this.sensorTemperaturaService = sensorTemperaturaService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<SensorTemperaturaDTO>> getAllSensorTemperaturas(@RequestHeader("Authorization") String token) {
-        List<SensorTemperaturaDTO> sensores = sensorTemperaturaService.findAll();
-        return ResponseEntity.ok(sensores);
+    @PostMapping("/sensoresTemperatura")
+    @ApiResponse(responseCode = "200", description = "Get all temperature sensors")
+    public ResponseEntity<List<SensorTemperaturaDTO>> getAllSensoresTemperatura(@RequestBody SensorTemperaturaRequest request) {
+        // Pasar el token proporcionado en el cuerpo de la solicitud al método findAll
+        return ResponseEntity.ok(sensorTemperaturaService.findAll(request.getToken()));
     }
 
     @GetMapping("/{id}")
@@ -52,6 +56,10 @@ public class SensorTemperaturaResource {
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteSensorTemperatura(@PathVariable final Integer id,
                                                         @RequestHeader("Authorization") String token) {
+        final ReferencedWarning referencedWarning = sensorTemperaturaService.getReferencedWarning(id);
+        if (referencedWarning != null) {
+            throw new ReferencedException(referencedWarning);
+        }
         sensorTemperaturaService.delete(id);
         return ResponseEntity.noContent().build();
     }
