@@ -90,19 +90,27 @@ public class EventoService {
         return evento;
     }
 
-    // ========================
-    // NUEVO CODIGO [ HILOS ]
-    // ========================
-
     public void iniciarGeneracionEventosConcurrentes() {
+        System.out.println("Iniciando generación de eventos concurrentes...");
+
+        // Verificar si hay sensores en la base de datos antes de empezar
+        if (sensorMovimientoRepository.findAll().isEmpty()) {
+            System.err.println("Error: No hay sensores de movimiento en la base de datos.");
+        }
+        if (sensorTemperaturaRepository.findAll().isEmpty()) {
+            System.err.println("Error: No hay sensores de temperatura en la base de datos.");
+        }
+        if (sensorAccesoRepository.findAll().isEmpty()) {
+            System.err.println("Error: No hay sensores de acceso en la base de datos.");
+        }
+
         iniciarGeneracionEventosMovimiento();
         iniciarGeneracionEventosTemperatura();
         iniciarGeneracionEventosAcceso();
+
+        System.out.println("Generación de eventos concurrentes iniciada.");
     }
 
-    // ========================
-    // Logica para eventos de Sensores de Movimiento
-    // ========================
     private void iniciarGeneracionEventosMovimiento() {
         List<SensorMovimiento> sensoresMovimiento = sensorMovimientoRepository.findAll();
         for (SensorMovimiento sensor : sensoresMovimiento.subList(0, Math.min(sensoresMovimiento.size(), 5))) {
@@ -126,9 +134,6 @@ public class EventoService {
         }
     }
 
-    // ========================
-    // Logica para eventos de Sensores de Temperatura
-    // ========================
     private void iniciarGeneracionEventosTemperatura() {
         List<SensorTemperatura> sensoresTemperatura = sensorTemperaturaRepository.findAll();
         for (SensorTemperatura sensor : sensoresTemperatura.subList(0, Math.min(sensoresTemperatura.size(), 5))) {
@@ -152,9 +157,6 @@ public class EventoService {
         }
     }
 
-    // ========================
-    // Logica para eventos de Sensores de Acceso
-    // ========================
     private void iniciarGeneracionEventosAcceso() {
         List<SensorAcceso> sensoresAcceso = sensorAccesoRepository.findAll();
         for (SensorAcceso sensor : sensoresAcceso.subList(0, Math.min(sensoresAcceso.size(), 5))) {
@@ -183,12 +185,10 @@ public class EventoService {
         System.out.println("Todos los eventos han sido eliminados.");
     }
 
-    // Metodo para obtener un intervalo aleatorio
     private int getRandomInterval() {
         return 1 + RANDOM.nextInt(3);  // Generamos un número entre 1 y 3
     }
 
-    // Metodo para detener la generacion de eventos
     public void detenerGeneracionEventos() {
         scheduler.shutdown();
     }

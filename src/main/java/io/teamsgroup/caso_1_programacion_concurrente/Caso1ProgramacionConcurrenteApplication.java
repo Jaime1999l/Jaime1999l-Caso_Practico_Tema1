@@ -1,11 +1,7 @@
 package io.teamsgroup.caso_1_programacion_concurrente;
 
 import io.teamsgroup.caso_1_programacion_concurrente.model.*;
-import io.teamsgroup.caso_1_programacion_concurrente.service.AuthService;
-import io.teamsgroup.caso_1_programacion_concurrente.service.EventoService;
-import io.teamsgroup.caso_1_programacion_concurrente.service.SensorAccesoService;
-import io.teamsgroup.caso_1_programacion_concurrente.service.SensorMovimientoService;
-import io.teamsgroup.caso_1_programacion_concurrente.service.SensorTemperaturaService;
+import io.teamsgroup.caso_1_programacion_concurrente.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 @SpringBootApplication
 public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunner {
 
+    @Autowired
+    private UsuarioService usuarioService;
     @Autowired
     private AuthService authService;
     @Autowired
@@ -49,18 +47,86 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
                 "12345",
                 "admin"
         );
-        registrarNuevoUsuario(
+        /*registrarNuevoUsuario(
                 "Usuario",
-                "Ap",
-                "Ap2",
+                "Ap1",
+                "Ap12",
                 "usuario2@example.com",
-                123456789,
-                "Calle Concurrente 123",
+                987654321,
+                "Calle Eveneto 123",
                 "12345",
                 "user"
-        );
+        );*/
 
         System.out.println("Usuarios registrados exitosamente.");
+
+        // Mostrar los usuarios registrados
+        mostrarUsuarios();
+
+        System.out.println("\nIniciando creación de sensores...\n");
+
+        for (int i = 1; i <= 5; i++) {
+            SensorMovimientoDTO sensorMovimientoDTO = new SensorMovimientoDTO();
+            sensorMovimientoDTO.setNombre("Sensor de Movimiento " + i);
+            sensorMovimientoDTO.setDatosMovimiento("Movimiento detectado en sensor " + i);
+            sensorMovimientoDTO.setNotificacion(Notificacion.ACTIVADO);
+            sensorMovimientoService.create(sensorMovimientoDTO);
+        }
+
+        for (int i = 1; i <= 5; i++) {
+            SensorAccesoDTO sensorAccesoDTO = new SensorAccesoDTO();
+            sensorAccesoDTO.setNombre("Sensor de Acceso " + i);
+            sensorAccesoDTO.setDatosAcceso("Acceso registrado en sensor " + i);
+            sensorAccesoDTO.setRespuesta(i % 2 == 0); // Alternar acceso permitido/denegado
+            sensorAccesoDTO.setNotificacion(Notificacion.ACTIVADO);
+            sensorAccesoService.create(sensorAccesoDTO);
+        }
+
+        for (int i = 1; i <= 5; i++) {
+            SensorTemperaturaDTO sensorTemperaturaDTO = new SensorTemperaturaDTO();
+            sensorTemperaturaDTO.setNombre("Sensor de Temperatura " + i);
+            sensorTemperaturaDTO.setDatosTemperatura(20.0 + i);
+            sensorTemperaturaDTO.setNotificacion(Notificacion.ACTIVADO);
+            sensorTemperaturaService.create(sensorTemperaturaDTO);
+        }
+
+        System.out.println("Sensores creados correctamente.");
+
+        System.out.println("/nMostrando sensores creados:");
+
+        // Mostrar Sensores de Movimiento
+        List<SensorMovimientoDTO> sensoresMovimiento1 = sensorMovimientoService.findAll();
+        System.out.println("\nSensores de Movimiento Creados:");
+        for (SensorMovimientoDTO sensor : sensoresMovimiento1) {
+            System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() + ", Datos: " + sensor.getDatosMovimiento());
+        }
+
+        // Mostrar Sensores de Acceso
+        List<SensorAccesoDTO> sensoresAcceso1 = sensorAccesoService.findAll();
+        System.out.println("\nSensores de Acceso Creados:");
+        for (SensorAccesoDTO sensor : sensoresAcceso1) {
+            System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() + ", Datos: " + sensor.getDatosAcceso() + ", Respuesta: " + (sensor.getRespuesta() ? "Permitido" : "Denegado"));
+        }
+
+        // Mostrar Sensores de Temperatura
+        List<SensorTemperaturaDTO> sensoresTemperatura1 = sensorTemperaturaService.findAll();
+        System.out.println("\nSensores de Temperatura Creados:");
+        for (SensorTemperaturaDTO sensor : sensoresTemperatura1) {
+            System.out.println("ID: " + sensor.getId() + ", Nombre: " + sensor.getNombre() + ", Temperatura: " + sensor.getDatosTemperatura());
+        }
+
+        // Generar eventos
+        System.out.println("Iniciando la generación de eventos concurrentes...");
+        eventoService.iniciarGeneracionEventosConcurrentes();
+        TimeUnit.MINUTES.sleep(15);
+    }
+
+    private void mostrarUsuarios() {
+        System.out.println("Usuarios registrados:");
+        List<UsuarioDTO> usuarios = usuarioService.findAll();
+        for (UsuarioDTO usuario : usuarios) {
+            System.out.println("ID: " + usuario.getId() + ", Nombre: " + usuario.getNombre() + ", Correo: " + usuario.getCorreo());
+        }
     }
 
     /**
@@ -80,6 +146,9 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
 
         // Eliminar todos los sensores de temperatura
         sensorTemperaturaService.findAll().forEach(sensor -> sensorTemperaturaService.delete(sensor.getId()));
+
+        // Eliminar todos los usuarios
+        usuarioService.findAll().forEach(usuario -> usuarioService.delete(usuario.getId()));
 
         System.out.println("Base de datos vaciada.\n");
     }
@@ -108,6 +177,7 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
         registerRequest.setTelefono(telefono);
         registerRequest.setDireccion(direccion);
         registerRequest.setContrasena(contrasena);
+        registerRequest.setRole(rolNombre);
 
         // Llamada al método register con dos parámetros
         authService.register(registerRequest, rolNombre);

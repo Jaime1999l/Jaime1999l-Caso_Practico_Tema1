@@ -47,11 +47,9 @@ export async function register(user) {
             },
             body: JSON.stringify(user)
         });
-
         if (!response.ok) {
             throw new Error('Error during registration');
         }
-
         return await response.json();
     } catch (error) {
         console.error('Error during registration:', error);

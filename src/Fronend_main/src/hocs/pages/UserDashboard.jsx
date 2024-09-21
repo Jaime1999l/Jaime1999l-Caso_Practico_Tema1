@@ -1,18 +1,12 @@
-'use client';
-
-import React from 'react';
-import { useState, useEffect } from 'react';
-import SensorTable from '../components/SensorTable';
+import React, { useState, useEffect } from 'react';
+import SensorTemperaturaList from "../components/SensorTemperaturaList";
 
 export default function UserDashboard() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        // Simulamos la carga de datos
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
+        setIsLoading(false);
     }, []);
 
     if (isLoading) {
@@ -39,7 +33,11 @@ export default function UserDashboard() {
             `}</style>
             <h1>User Dashboard</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <SensorTable sensorType="temperature" />
+
+            <div className="section">
+                <h2>Temperature Sensors</h2>
+                <SensorTemperaturaList />
+            </div>
         </div>
     );
 }

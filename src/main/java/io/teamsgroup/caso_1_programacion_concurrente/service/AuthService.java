@@ -89,8 +89,8 @@ public class AuthService {
         nuevoUsuario.setCorreo(registerRequest.getCorreo());
         nuevoUsuario.setTelefono(registerRequest.getTelefono());
         nuevoUsuario.setDireccion(registerRequest.getDireccion());
-        nuevoUsuario.setUsuario(credenciales); // Asociar las credenciales al usuario
-        nuevoUsuario.setUsuarios(rol); // Asociar el rol al usuario
+        nuevoUsuario.setUsuario(credenciales);
+        nuevoUsuario.setUsuarios(rol);
         System.out.println("Asignando el rol con ID: " + rol.getId() + " al usuario.");
 
         usuarioRepository.save(nuevoUsuario); // Guardar el usuario en la base de datos

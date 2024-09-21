@@ -30,4 +30,7 @@ public class RegisterRequest {
     private Integer telefono;
 
     private String direccion;
+
+    @NotNull
+    private String role;
 }
