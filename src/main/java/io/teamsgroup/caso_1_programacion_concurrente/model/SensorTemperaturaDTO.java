@@ -25,4 +25,8 @@ public class SensorTemperaturaDTO {
 
     private Integer sensorTemperatura;
 
+    @NotNull
+    @Size(max = 255)
+    private String token;
+
 }

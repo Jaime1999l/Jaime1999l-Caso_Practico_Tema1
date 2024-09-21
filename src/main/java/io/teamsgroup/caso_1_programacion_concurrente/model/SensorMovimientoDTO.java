@@ -26,4 +26,8 @@ public class SensorMovimientoDTO {
 
     private Integer sensoresMovimiento;
 
+    @NotNull
+    @Size(max = 255)
+    private String token;
+
 }

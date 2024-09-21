@@ -84,6 +84,7 @@ public class AuthService {
 
         // Crear el nuevo usuario
         Usuario nuevoUsuario = new Usuario();
+
         nuevoUsuario.setNombre(registerRequest.getNombre());
         nuevoUsuario.setApellido1(registerRequest.getApellido1());
         nuevoUsuario.setApellido2(registerRequest.getApellido2());

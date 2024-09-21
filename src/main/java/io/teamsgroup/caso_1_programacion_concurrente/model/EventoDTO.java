@@ -25,4 +25,8 @@ public class EventoDTO {
 
     private Integer eventosAcceso;
 
+    @NotNull
+    @Size(max = 255)
+    private String token;
+
 }

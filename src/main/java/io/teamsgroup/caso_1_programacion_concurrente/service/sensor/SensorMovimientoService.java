@@ -9,11 +9,11 @@ import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorMovimientoRepos
 import io.teamsgroup.caso_1_programacion_concurrente.repos.UsuarioRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.util.NotFoundException;
 import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedWarning;
-import java.util.List;
-
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 
 @Service
 public class SensorMovimientoService {
@@ -23,15 +23,16 @@ public class SensorMovimientoService {
     private final EventoRepository eventoRepository;
 
     public SensorMovimientoService(final SensorMovimientoRepository sensorMovimientoRepository,
-                                   final UsuarioRepository usuarioRepository, final EventoRepository eventoRepository) {
+                                   final UsuarioRepository usuarioRepository,
+                                   final EventoRepository eventoRepository) {
         this.sensorMovimientoRepository = sensorMovimientoRepository;
         this.usuarioRepository = usuarioRepository;
         this.eventoRepository = eventoRepository;
     }
 
     public List<SensorMovimientoDTO> findAll() {
-        final List<SensorMovimiento> sensorMovimientoes = sensorMovimientoRepository.findAll(Sort.by("id"));
-        return sensorMovimientoes.stream()
+        final List<SensorMovimiento> sensorMovimientos = sensorMovimientoRepository.findAll(Sort.by("id"));
+        return sensorMovimientos.stream()
                 .map(sensorMovimiento -> mapToDTO(sensorMovimiento, new SensorMovimientoDTO()))
                 .toList();
     }
@@ -43,8 +44,12 @@ public class SensorMovimientoService {
     }
 
     public Integer create(final SensorMovimientoDTO sensorMovimientoDTO) {
-        final SensorMovimiento sensorMovimiento = new SensorMovimiento();
-        mapToEntity(sensorMovimientoDTO, sensorMovimiento);
+        SensorMovimiento sensorMovimiento = new SensorMovimiento();
+        sensorMovimiento.setNombre(sensorMovimientoDTO.getNombre());
+        sensorMovimiento.setDatosMovimiento(sensorMovimientoDTO.getDatosMovimiento());
+        sensorMovimiento.setNotificacion(sensorMovimientoDTO.getNotificacion());
+        sensorMovimiento.setToken("TOKEN_MOVIMIENTO_" + sensorMovimientoDTO.getNombre()); // Genera un token único
+        System.out.println("Token generado para Sensor de Movimiento: " + sensorMovimiento.getToken()); // Muestra el token en consola
         return sensorMovimientoRepository.save(sensorMovimiento).getId();
     }
 
@@ -52,26 +57,16 @@ public class SensorMovimientoService {
         final SensorMovimiento sensorMovimiento = sensorMovimientoRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(sensorMovimientoDTO, sensorMovimiento);
+        sensorMovimiento.setToken(generateToken("MOVIMIENTO", sensorMovimiento.getNombre()));
         sensorMovimientoRepository.save(sensorMovimiento);
     }
 
     public void delete(final Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El id no puede ser null");
+        }
         sensorMovimientoRepository.deleteById(id);
     }
-
-    /*@Async
-    public void processSensorMovimientoEvents() {
-        List<SensorMovimiento> sensors = sensorMovimientoRepository.findAll();
-        for (SensorMovimiento sensorMovimiento : sensors) {
-            processSensorMovimientoEvent(sensorMovimiento);
-        }
-    }
-
-    private void processSensorMovimientoEvent(SensorMovimiento sensorMovimiento) {
-        Evento evento = new Evento();
-        evento.setDatos("Evento generado por SensorMovimiento con ID: " + sensorMovimiento.getId());
-        eventoRepository.save(evento);
-    }*/
 
     private SensorMovimientoDTO mapToDTO(final SensorMovimiento sensorMovimiento,
                                          final SensorMovimientoDTO sensorMovimientoDTO) {
@@ -79,7 +74,10 @@ public class SensorMovimientoService {
         sensorMovimientoDTO.setNombre(sensorMovimiento.getNombre());
         sensorMovimientoDTO.setNotificacion(sensorMovimiento.getNotificacion());
         sensorMovimientoDTO.setDatosMovimiento(sensorMovimiento.getDatosMovimiento());
-        sensorMovimientoDTO.setSensoresMovimiento(sensorMovimiento.getSensoresMovimiento() == null ? null : sensorMovimiento.getSensoresMovimiento().getId());
+        sensorMovimientoDTO.setSensoresMovimiento(sensorMovimiento.getSensoresMovimiento() == null
+                ? null
+                : sensorMovimiento.getSensoresMovimiento().getId());
+        sensorMovimientoDTO.setToken(sensorMovimiento.getToken());
         return sensorMovimientoDTO;
     }
 
@@ -88,9 +86,11 @@ public class SensorMovimientoService {
         sensorMovimiento.setNombre(sensorMovimientoDTO.getNombre());
         sensorMovimiento.setNotificacion(sensorMovimientoDTO.getNotificacion());
         sensorMovimiento.setDatosMovimiento(sensorMovimientoDTO.getDatosMovimiento());
-        final Usuario sensoresMovimiento = sensorMovimientoDTO.getSensoresMovimiento() == null ? null : usuarioRepository.findById(sensorMovimientoDTO.getSensoresMovimiento())
-                .orElseThrow(() -> new NotFoundException("sensoresMovimiento not found"));
-        sensorMovimiento.setSensoresMovimiento(sensoresMovimiento);
+        final Usuario usuarioAsociado = sensorMovimientoDTO.getSensoresMovimiento() == null
+                ? null
+                : usuarioRepository.findById(sensorMovimientoDTO.getSensoresMovimiento())
+                .orElseThrow(() -> new NotFoundException("Usuario asociado no encontrado"));
+        sensorMovimiento.setSensoresMovimiento(usuarioAsociado);
         return sensorMovimiento;
     }
 
@@ -107,4 +107,8 @@ public class SensorMovimientoService {
         return null;
     }
 
+    // Generador simple de tokens basados en el tipo de sensor y su nombre
+    private String generateToken(String tipo, String nombre) {
+        return tipo + "_" + nombre + "_" + System.currentTimeMillis();
+    }
 }

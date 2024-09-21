@@ -32,8 +32,11 @@ public class SensorAcceso extends Sensor {
     @JoinColumn(name = "sensor_acceso_id")
     private Usuario sensorAcceso;
 
-    public SensorAcceso(Integer id, String nombre, Notificacion notificacion, String datosAcceso, Boolean respuesta, Set<Evento> sensorId, Usuario sensorAcceso) {
-        super(id, nombre, notificacion);
+    @Column(nullable = false, unique = true)
+    private String token;
+
+    public SensorAcceso( String nombre, Notificacion notificacion, String datosAcceso, Boolean respuesta, Set<Evento> sensorId, Usuario sensorAcceso) {
+        super(null, nombre, notificacion);
         this.datosAcceso = datosAcceso;
         this.respuesta = respuesta;
         this.sensorId = sensorId;

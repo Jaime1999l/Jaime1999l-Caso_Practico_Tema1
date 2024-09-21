@@ -25,6 +25,11 @@ spring:
 server:
   port: 8080 # El backend corre en el puerto 8080
 
+# Configuración de JWT para autenticación y autorización
+jwt:
+  secret: securesecretkey # Esta propiedad se utiliza, pero la clave segura se generará en el código.
+  # Duración del token en milisegundos (24 horas).
+
 # Configuración de CORS para permitir la comunicación desde el frontend (puerto 8082)
 # La configuración de CORS se hace principalmente en el código de configuración de seguridad (SecurityConfig.java)
 

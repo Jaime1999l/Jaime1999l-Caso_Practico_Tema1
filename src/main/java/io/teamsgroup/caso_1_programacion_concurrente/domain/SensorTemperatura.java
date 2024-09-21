@@ -29,8 +29,11 @@ public class SensorTemperatura extends Sensor {
     @JoinColumn(name = "sensor_temperatura_id")
     private Usuario sensorTemperatura;
 
-    public SensorTemperatura(Integer id, String nombre, Notificacion notificacion, Double datosTemperatura, Set<Evento> sensorId, Usuario sensorTemperatura) {
-        super(id, nombre, notificacion);
+    @Column(nullable = false, unique = true)
+    private String token;
+
+    public SensorTemperatura( String nombre, Notificacion notificacion, Double datosTemperatura, Set<Evento> sensorId, Usuario sensorTemperatura) {
+        super(null, nombre, notificacion);
         this.datosTemperatura = datosTemperatura;
         this.sensorId = sensorId;
         this.sensorTemperatura = sensorTemperatura;

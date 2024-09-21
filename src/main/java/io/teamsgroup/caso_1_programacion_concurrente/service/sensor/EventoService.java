@@ -1,13 +1,13 @@
 package io.teamsgroup.caso_1_programacion_concurrente.service.sensor;
 
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Evento;
-import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorAcceso;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorMovimiento;
+import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorAcceso;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorTemperatura;
 import io.teamsgroup.caso_1_programacion_concurrente.model.EventoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.EventoRepository;
-import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorAccesoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorMovimientoRepository;
+import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorAccesoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorTemperaturaRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.util.NotFoundException;
 import org.springframework.data.domain.Sort;
@@ -54,16 +54,46 @@ public class EventoService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Integer create(final EventoDTO eventoDTO) {
-        final Evento evento = new Evento();
-        mapToEntity(eventoDTO, evento);
-        return eventoRepository.save(evento).getId();
+    public Integer create(EventoDTO eventoDTO) {
+        // Crear un nuevo Evento
+        Evento evento = new Evento();
+        evento.setNombre(eventoDTO.getNombre());
+        evento.setDatos(eventoDTO.getDatos());
+
+        // Asociar el evento con un sensor específico (si aplica)
+        if (eventoDTO.getEventosMovimiento() != null) {
+            SensorMovimiento sensorMovimiento = sensorMovimientoRepository.findById(eventoDTO.getEventosMovimiento())
+                    .orElseThrow(() -> new NotFoundException("Sensor de movimiento no encontrado"));
+            evento.setEventosMovimiento(sensorMovimiento);
+        }
+
+        if (eventoDTO.getEventosAcceso() != null) {
+            SensorAcceso sensorAcceso = sensorAccesoRepository.findById(eventoDTO.getEventosAcceso())
+                    .orElseThrow(() -> new NotFoundException("Sensor de acceso no encontrado"));
+            evento.setEventosAcceso(sensorAcceso);
+        }
+
+        if (eventoDTO.getEventosTemperatura() != null) {
+            SensorTemperatura sensorTemperatura = sensorTemperaturaRepository.findById(eventoDTO.getEventosTemperatura())
+                    .orElseThrow(() -> new NotFoundException("Sensor de temperatura no encontrado"));
+            evento.setEventosTemperatura(sensorTemperatura);
+        }
+
+        // Generar un token único para este evento
+        String token = "TOKEN_EVENTO_" + System.currentTimeMillis() + "_" + eventoDTO.getNombre();
+        evento.setToken(token);
+
+        // Guardar el evento en la base de datos
+        Evento savedEvento = eventoRepository.save(evento);
+        return savedEvento.getId(); // Retornar el ID del evento creado
     }
+
 
     public void update(final Integer id, final EventoDTO eventoDTO) {
         final Evento evento = eventoRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(eventoDTO, evento);
+        evento.setToken(generateToken("EVENTO", evento.getNombre()));
         eventoRepository.save(evento);
     }
 
@@ -78,6 +108,7 @@ public class EventoService {
         eventoDTO.setEventosMovimiento(evento.getEventosMovimiento() == null ? null : evento.getEventosMovimiento().getId());
         eventoDTO.setEventosTemperatura(evento.getEventosTemperatura() == null ? null : evento.getEventosTemperatura().getId());
         eventoDTO.setEventosAcceso(evento.getEventosAcceso() == null ? null : evento.getEventosAcceso().getId());
+        eventoDTO.setToken(evento.getToken());
         return eventoDTO;
     }
 
@@ -93,7 +124,6 @@ public class EventoService {
     public void iniciarGeneracionEventosConcurrentes() {
         System.out.println("Iniciando generación de eventos concurrentes...");
 
-        // Verificar si hay sensores en la base de datos antes de empezar
         if (sensorMovimientoRepository.findAll().isEmpty()) {
             System.err.println("Error: No hay sensores de movimiento en la base de datos.");
         }
@@ -127,6 +157,7 @@ public class EventoService {
             evento.setDateCreated(OffsetDateTime.now());
             evento.setLastUpdated(OffsetDateTime.now());
             evento.setEventosMovimiento(sensor);
+            evento.setToken(generateToken("MOVIMIENTO", evento.getNombre()));
             eventoRepository.save(evento);
             System.out.println("Evento generado (Movimiento): " + evento.getNombre() + " - Sensor ID: " + sensor.getId());
         } catch (Exception e) {
@@ -150,6 +181,7 @@ public class EventoService {
             evento.setDateCreated(OffsetDateTime.now());
             evento.setLastUpdated(OffsetDateTime.now());
             evento.setEventosTemperatura(sensor);
+            evento.setToken(generateToken("TEMPERATURA", evento.getNombre()));
             eventoRepository.save(evento);
             System.out.println("Evento generado (Temperatura): " + evento.getNombre() + " - Sensor ID: " + sensor.getId());
         } catch (Exception e) {
@@ -173,6 +205,7 @@ public class EventoService {
             evento.setDateCreated(OffsetDateTime.now());
             evento.setLastUpdated(OffsetDateTime.now());
             evento.setEventosAcceso(sensor);
+            evento.setToken(generateToken("ACCESO", evento.getNombre()));
             eventoRepository.save(evento);
             System.out.println("Evento generado (Acceso): " + evento.getNombre() + " - Sensor ID: " + sensor.getId());
         } catch (Exception e) {
@@ -192,4 +225,11 @@ public class EventoService {
     public void detenerGeneracionEventos() {
         scheduler.shutdown();
     }
+
+    // Generador simple de tokens basados en el tipo de evento y su nombre
+    private String generateToken(String tipo, String nombre) {
+        return tipo + "_" + nombre + "_" + System.currentTimeMillis();
+    }
 }
+
+
