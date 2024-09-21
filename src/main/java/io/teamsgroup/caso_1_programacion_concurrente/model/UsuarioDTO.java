@@ -16,7 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class UsuarioDTO {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Importante para que el ID se genere automáticamente
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Integer id;
 
@@ -42,7 +42,7 @@ public class UsuarioDTO {
     @Size(max = 255)
     private String direccion;
 
-    @ManyToOne(fetch = FetchType.EAGER) // Relación con la entidad Rol
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuarios_id", nullable = false)
     private Rol usuarios1;
 

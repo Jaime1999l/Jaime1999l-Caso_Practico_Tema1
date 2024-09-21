@@ -1,112 +1,52 @@
-'use client';
-
-import React from 'react';
-import { useState } from 'react';
-import AuthService from '../../services/authService/page';
+import React, { useState } from 'react';
+import { register } from '../../services/authService/page';
 
 export default function UserRegisterForm() {
     const [name, setName] = useState('');
+    const [lastName1, setLastName1] = useState('');
+    const [lastName2, setLastName2] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
     const [role, setRole] = useState('user');
-    const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        setSuccess('');
-
-        if (password.length < 6) {
-            setError('Password must be at least 6 characters long');
-            return;
-        }
-
-        setLoading(true);
         try {
-            await AuthService.register({ name, email, password, role });
-            setSuccess('User registered successfully');
-            setError('');
-            setName('');
-            setEmail('');
-            setPassword('');
-            setRole('user');
+            await register({
+                nombre: name,
+                apellido1: lastName1,
+                apellido2: lastName2,
+                correo: email,
+                contrasena: password,
+                telefono: phone,
+                direccion: address,
+                role
+            });
+            alert('User registered successfully');
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to register user');
-        } finally {
-            setLoading(false);
+            setError('Error during registration');
         }
     };
 
     return (
-        <div className="container">
-            <style jsx>{`
-                .container {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    min-height: 100vh;
-                    background-color: #f0f0f0;
-                    font-family: 'Arial', sans-serif;
-                }
-                .form {
-                    background-color: #fff;
-                    padding: 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                    display: flex;
-                    flex-direction: column;
-                    width: 300px;
-                }
-                input, select, button {
-                    margin: 10px 0;
-                    padding: 10px;
-                }
-                button {
-                    background-color: orangered;
-                    color: white;
-                    border: none;
-                    cursor: pointer;
-                }
-                button:hover {
-                    background-color: darkred;
-                }
-            `}</style>
-            <h2>Register New User</h2>
+        <form onSubmit={handleSubmit}>
+            <input type="text" placeholder="First Name" value={name} onChange={(e) => setName(e.target.value)} />
+            <input type="text" placeholder="Last Name" value={lastName1} onChange={(e) => setLastName1(e.target.value)} />
+            <input type="text" placeholder="Second Last Name" value={lastName2} onChange={(e) => setLastName2(e.target.value)} />
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <input type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button type="submit">Register</button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-            <form onSubmit={handleSubmit} className="form">
-                <input
-                    type="text"
-                    placeholder="Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <select value={role} onChange={(e) => setRole(e.target.value)}>
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                </select>
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Registering...' : 'Register'}
-                </button>
-            </form>
-        </div>
+        </form>
     );
 }

@@ -8,5 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SensorAccesoRepository extends JpaRepository<SensorAcceso, Integer> {
 
     SensorAcceso findFirstBySensorAcceso(Usuario usuario);
-
 }

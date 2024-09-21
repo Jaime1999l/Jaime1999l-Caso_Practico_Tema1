@@ -1,4 +1,4 @@
-package io.teamsgroup.caso_1_programacion_concurrente.service;
+package io.teamsgroup.caso_1_programacion_concurrente.service.usuario;
 
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Credenciales;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Rol;

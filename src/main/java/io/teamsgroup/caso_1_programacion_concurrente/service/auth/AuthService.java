@@ -1,11 +1,11 @@
-package io.teamsgroup.caso_1_programacion_concurrente.service;
+package io.teamsgroup.caso_1_programacion_concurrente.service.auth;
 
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Credenciales;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Rol;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Usuario;
-import io.teamsgroup.caso_1_programacion_concurrente.model.AuthResponse;
-import io.teamsgroup.caso_1_programacion_concurrente.model.LoginRequest;
-import io.teamsgroup.caso_1_programacion_concurrente.model.RegisterRequest;
+import io.teamsgroup.caso_1_programacion_concurrente.model.auth.AuthResponse;
+import io.teamsgroup.caso_1_programacion_concurrente.model.auth.LoginRequest;
+import io.teamsgroup.caso_1_programacion_concurrente.model.auth.RegisterRequest;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.RolRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.UsuarioRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.CredencialesRepository;
@@ -52,13 +52,14 @@ public class AuthService {
         return ResponseEntity.status(404).body(new AuthResponse("Usuario no encontrado", null, null));
     }
 
+    @Transactional
     public ResponseEntity<AuthResponse> register(RegisterRequest registerRequest, String rolNombre) {
-        // Verificar si el usuario ya existe
+        // Verificamos si el usuario ya existe
         if (usuarioRepository.findByCorreo(registerRequest.getCorreo()).isPresent()) {
             return ResponseEntity.status(400).body(new AuthResponse("El usuario ya existe", null, null));
         }
 
-        // Validar el rol ingresado por el administrador
+        // Validamos el rol ingresado por el administrador
         if (!"admin".equalsIgnoreCase(rolNombre) && !"user".equalsIgnoreCase(rolNombre)) {
             return ResponseEntity.status(400).body(new AuthResponse("Rol no válido. Use 'admin' o 'user'.", null, null));
         }
@@ -83,14 +84,15 @@ public class AuthService {
 
         // Crear el nuevo usuario
         Usuario nuevoUsuario = new Usuario();
+
         nuevoUsuario.setNombre(registerRequest.getNombre());
         nuevoUsuario.setApellido1(registerRequest.getApellido1());
         nuevoUsuario.setApellido2(registerRequest.getApellido2());
         nuevoUsuario.setCorreo(registerRequest.getCorreo());
         nuevoUsuario.setTelefono(registerRequest.getTelefono());
         nuevoUsuario.setDireccion(registerRequest.getDireccion());
-        nuevoUsuario.setUsuario(credenciales); // Asociar las credenciales al usuario
-        nuevoUsuario.setUsuarios(rol); // Asociar el rol al usuario
+        nuevoUsuario.setUsuario(credenciales);
+        nuevoUsuario.setUsuarios(rol);
         System.out.println("Asignando el rol con ID: " + rol.getId() + " al usuario.");
 
         usuarioRepository.save(nuevoUsuario); // Guardar el usuario en la base de datos

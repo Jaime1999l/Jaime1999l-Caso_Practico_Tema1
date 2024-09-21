@@ -36,6 +36,9 @@ public class Evento {
     @Column
     private String datos;
 
+    @Column(nullable = false, unique = true)
+    private String token;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "eventos_movimiento_id")
     private SensorMovimiento eventosMovimiento;

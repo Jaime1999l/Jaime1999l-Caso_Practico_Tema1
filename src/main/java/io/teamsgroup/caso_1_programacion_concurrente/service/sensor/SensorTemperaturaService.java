@@ -1,18 +1,22 @@
-package io.teamsgroup.caso_1_programacion_concurrente.service;
+package io.teamsgroup.caso_1_programacion_concurrente.service.sensor;
 
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Evento;
+import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorMovimiento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorTemperatura;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Usuario;
+import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorTemperaturaDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.EventoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorTemperaturaRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.UsuarioRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.util.NotFoundException;
 import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedWarning;
-import java.util.List;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.scheduling.annotation.Async;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SensorTemperaturaService {
@@ -22,18 +26,35 @@ public class SensorTemperaturaService {
     private final EventoRepository eventoRepository;
 
     public SensorTemperaturaService(final SensorTemperaturaRepository sensorTemperaturaRepository,
-                                    final UsuarioRepository usuarioRepository, final EventoRepository eventoRepository) {
+                                    final UsuarioRepository usuarioRepository,
+                                    final EventoRepository eventoRepository) {
         this.sensorTemperaturaRepository = sensorTemperaturaRepository;
         this.usuarioRepository = usuarioRepository;
         this.eventoRepository = eventoRepository;
     }
 
-    public List<SensorTemperaturaDTO> findAll() {
-        final List<SensorTemperatura> sensorTemperaturas = sensorTemperaturaRepository.findAll(Sort.by("id"));
-        return sensorTemperaturas.stream()
-                .map(sensorTemperatura -> mapToDTO(sensorTemperatura, new SensorTemperaturaDTO()))
+    public List<SensorTemperaturaDTO> findAll(String token) {
+        List<SensorTemperatura> sensorTemperaturas = sensorTemperaturaRepository.findAll(Sort.by("id"));
+
+        System.out.println("List of all sensors: " + sensorTemperaturas.size()); // Verificar cuántos sensores se cargaron
+        System.out.println("Searching sensors with token: " + token); // Verificar el token buscado
+
+        // Filtrar los sensores que tienen el token proporcionado
+        List<SensorTemperatura> sensoresConToken = sensorTemperaturas.stream()
+                .filter(sensor -> sensor.getToken().equals(token))
+                .toList();
+
+        // Si no hay sensores con el token, lanzar excepción
+        if (sensoresConToken.isEmpty()) {
+            System.out.println("Token inválido para sensores de temperatura."); // Muestra mensaje en consola
+        }
+
+        // Convertir los sensores filtrados a DTO
+        return sensoresConToken.stream()
+                .map(sensorAcceso -> mapToDTO(sensorAcceso, new SensorTemperaturaDTO()))
                 .toList();
     }
+
 
     public SensorTemperaturaDTO get(final Integer id) {
         return sensorTemperaturaRepository.findById(id)
@@ -42,8 +63,12 @@ public class SensorTemperaturaService {
     }
 
     public Integer create(final SensorTemperaturaDTO sensorTemperaturaDTO) {
-        final SensorTemperatura sensorTemperatura = new SensorTemperatura();
-        mapToEntity(sensorTemperaturaDTO, sensorTemperatura);
+        SensorTemperatura sensorTemperatura = new SensorTemperatura();
+        sensorTemperatura.setNombre(sensorTemperaturaDTO.getNombre());
+        sensorTemperatura.setDatosTemperatura(sensorTemperaturaDTO.getDatosTemperatura());
+        sensorTemperatura.setNotificacion(sensorTemperaturaDTO.getNotificacion());
+        sensorTemperatura.setToken(sensorTemperaturaDTO.getToken());
+        System.out.println("Token generado para Sensor de Temperatura: " + sensorTemperatura.getToken()); // Muestra el token en consola
         return sensorTemperaturaRepository.save(sensorTemperatura).getId();
     }
 
@@ -51,26 +76,16 @@ public class SensorTemperaturaService {
         final SensorTemperatura sensorTemperatura = sensorTemperaturaRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(sensorTemperaturaDTO, sensorTemperatura);
+        sensorTemperatura.setToken(generateToken("TEMPERATURA"));
         sensorTemperaturaRepository.save(sensorTemperatura);
     }
 
     public void delete(final Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El id no puede ser null");
+        }
         sensorTemperaturaRepository.deleteById(id);
     }
-
-    /*@Async
-    public void processSensorTemperaturaEvents() {
-        List<SensorTemperatura> sensors = sensorTemperaturaRepository.findAll();
-        for (SensorTemperatura sensorTemperatura : sensors) {
-            processSensorTemperaturaEvent(sensorTemperatura);
-        }
-    }
-
-    private void processSensorTemperaturaEvent(SensorTemperatura sensorTemperatura) {
-        Evento evento = new Evento();
-        evento.setDatos("Evento generado por SensorTemperatura con ID: " + sensorTemperatura.getId());
-        eventoRepository.save(evento);
-    }*/
 
     private SensorTemperaturaDTO mapToDTO(final SensorTemperatura sensorTemperatura,
                                           final SensorTemperaturaDTO sensorTemperaturaDTO) {
@@ -78,7 +93,10 @@ public class SensorTemperaturaService {
         sensorTemperaturaDTO.setNombre(sensorTemperatura.getNombre());
         sensorTemperaturaDTO.setNotificacion(sensorTemperatura.getNotificacion());
         sensorTemperaturaDTO.setDatosTemperatura(sensorTemperatura.getDatosTemperatura());
-        sensorTemperaturaDTO.setSensorTemperatura(sensorTemperatura.getSensorTemperatura() == null ? null : sensorTemperatura.getSensorTemperatura().getId());
+        sensorTemperaturaDTO.setSensorTemperatura(sensorTemperatura.getSensorTemperatura() == null
+                ? null
+                : sensorTemperatura.getSensorTemperatura().getId());
+        sensorTemperaturaDTO.setToken(sensorTemperatura.getToken());
         return sensorTemperaturaDTO;
     }
 
@@ -91,11 +109,9 @@ public class SensorTemperaturaService {
                 ? null
                 : usuarioRepository.findById(sensorTemperaturaDTO.getSensorTemperatura())
                 .orElseThrow(() -> new NotFoundException("Usuario asociado no encontrado"));
-
-        sensorTemperatura.setSensorTemperatura(usuarioAsociado); // Se asigna correctamente el usuario
+        sensorTemperatura.setSensorTemperatura(usuarioAsociado);
         return sensorTemperatura;
     }
-
 
     public ReferencedWarning getReferencedWarning(final Integer id) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
@@ -110,4 +126,8 @@ public class SensorTemperaturaService {
         return null;
     }
 
+    private String generateToken(String tipo) {
+        // Genera un token genérico sin el nombre específico del sensor
+        return tipo + "_Sensor";
+    }
 }

@@ -1,4 +1,4 @@
-package io.teamsgroup.caso_1_programacion_concurrente.model;
+package io.teamsgroup.caso_1_programacion_concurrente.model.auth;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,4 +30,7 @@ public class RegisterRequest {
     private Integer telefono;
 
     private String direccion;
+
+    @NotNull
+    private String role;
 }

@@ -1,19 +1,22 @@
-package io.teamsgroup.caso_1_programacion_concurrente.service;
+package io.teamsgroup.caso_1_programacion_concurrente.service.sensor;
 
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Evento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorAcceso;
+import io.teamsgroup.caso_1_programacion_concurrente.domain.SensorMovimiento;
 import io.teamsgroup.caso_1_programacion_concurrente.domain.Usuario;
 import io.teamsgroup.caso_1_programacion_concurrente.model.SensorAccesoDTO;
+import io.teamsgroup.caso_1_programacion_concurrente.model.SensorMovimientoDTO;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.EventoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.SensorAccesoRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.repos.UsuarioRepository;
 import io.teamsgroup.caso_1_programacion_concurrente.util.NotFoundException;
 import io.teamsgroup.caso_1_programacion_concurrente.util.ReferencedWarning;
-import java.util.List;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SensorAccesoService {
@@ -23,18 +26,36 @@ public class SensorAccesoService {
     private final EventoRepository eventoRepository;
 
     public SensorAccesoService(final SensorAccesoRepository sensorAccesoRepository,
-                               final UsuarioRepository usuarioRepository, final EventoRepository eventoRepository) {
+                               final UsuarioRepository usuarioRepository,
+                               final EventoRepository eventoRepository) {
         this.sensorAccesoRepository = sensorAccesoRepository;
         this.usuarioRepository = usuarioRepository;
         this.eventoRepository = eventoRepository;
     }
 
-    public List<SensorAccesoDTO> findAll() {
-        final List<SensorAcceso> sensorAccesoes = sensorAccesoRepository.findAll(Sort.by("id"));
-        return sensorAccesoes.stream()
+    public List<SensorAccesoDTO> findAll(String token) {
+        List<SensorAcceso> sensorAccesos = sensorAccesoRepository.findAll(Sort.by("id"));
+
+        System.out.println("List of all sensors: " + sensorAccesos.size()); // Verificar cuántos sensores se cargaron
+        System.out.println("Searching sensors with token: " + token); // Verificar el token buscado
+
+        // Filtrar los sensores que tienen el token proporcionado
+        List<SensorAcceso> sensoresConToken = sensorAccesos.stream()
+                .filter(sensor -> sensor.getToken().equals(token))
+                .toList();
+
+        // Si no hay sensores con el token, lanzar excepción
+        if (sensoresConToken.isEmpty()) {
+            System.out.println("Token inválido para sensores de acceso."); // Muestra mensaje en consola
+        }
+
+        // Convertir los sensores filtrados a DTO
+        return sensoresConToken.stream()
                 .map(sensorAcceso -> mapToDTO(sensorAcceso, new SensorAccesoDTO()))
                 .toList();
     }
+
+
 
     public SensorAccesoDTO get(final Integer id) {
         return sensorAccesoRepository.findById(id)
@@ -43,35 +64,32 @@ public class SensorAccesoService {
     }
 
     public Integer create(final SensorAccesoDTO sensorAccesoDTO) {
-        final SensorAcceso sensorAcceso = new SensorAcceso();
-        mapToEntity(sensorAccesoDTO, sensorAcceso);
+        SensorAcceso sensorAcceso = new SensorAcceso();
+        sensorAcceso.setNombre(sensorAccesoDTO.getNombre());
+        sensorAcceso.setDatosAcceso(sensorAccesoDTO.getDatosAcceso());
+        sensorAcceso.setNotificacion(sensorAccesoDTO.getNotificacion());
+        sensorAcceso.setRespuesta(sensorAccesoDTO.getRespuesta());
+        sensorAcceso.setToken(sensorAccesoDTO.getToken());
+        System.out.println("Token generado para Sensor de Acceso: " + sensorAcceso.getToken()); // Muestra el token en consola
         return sensorAccesoRepository.save(sensorAcceso).getId();
     }
+
+
 
     public void update(final Integer id, final SensorAccesoDTO sensorAccesoDTO) {
         final SensorAcceso sensorAcceso = sensorAccesoRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(sensorAccesoDTO, sensorAcceso);
+        sensorAcceso.setToken(generateToken("ACCESO"));
         sensorAccesoRepository.save(sensorAcceso);
     }
 
     public void delete(final Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El id no puede ser null");
+        }
         sensorAccesoRepository.deleteById(id);
     }
-
-    /*@Async
-    public void processSensorAccesoEvents() {
-        List<SensorAcceso> sensors = sensorAccesoRepository.findAll();
-        for (SensorAcceso sensorAcceso : sensors) {
-            processSensorAccesoEvent(sensorAcceso);
-        }
-    }
-
-    private void processSensorAccesoEvent(SensorAcceso sensorAcceso) {
-        Evento evento = new Evento();
-        evento.setDatos("Evento generado por SensorAcceso con ID: " + sensorAcceso.getId());
-        eventoRepository.save(evento);
-    }*/
 
     private SensorAccesoDTO mapToDTO(final SensorAcceso sensorAcceso,
                                      final SensorAccesoDTO sensorAccesoDTO) {
@@ -81,6 +99,7 @@ public class SensorAccesoService {
         sensorAccesoDTO.setDatosAcceso(sensorAcceso.getDatosAcceso());
         sensorAccesoDTO.setRespuesta(sensorAcceso.getRespuesta());
         sensorAccesoDTO.setSensorAcceso(sensorAcceso.getSensorAcceso() == null ? null : sensorAcceso.getSensorAcceso().getId());
+        sensorAccesoDTO.setToken(sensorAcceso.getToken());
         return sensorAccesoDTO;
     }
 
@@ -100,7 +119,6 @@ public class SensorAccesoService {
         return sensorAcceso;
     }
 
-
     public ReferencedWarning getReferencedWarning(final Integer id) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final SensorAcceso sensorAcceso = sensorAccesoRepository.findById(id)
@@ -114,4 +132,8 @@ public class SensorAccesoService {
         return null;
     }
 
+    private String generateToken(String tipo) {
+        // Genera un token genérico sin el nombre específico del sensor
+        return tipo + "_Sensor";
+    }
 }

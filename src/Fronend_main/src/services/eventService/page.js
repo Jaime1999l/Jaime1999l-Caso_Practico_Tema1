@@ -1,18 +1,16 @@
-const API_BASE_URL = 'http://localhost:8080/api';
-
-export async function getEventos() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/eventos`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch events');
+// Función para obtener todos los eventos
+export async function getAllEventos() {
+    console.log("Fetching all events from backend");
+    const response = await fetch('/api/eventos/events_2', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
         }
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching events:', error);
-        throw error;
+    });
+    if (!response.ok) {
+        throw new Error('Error al obtener todos los eventos');
     }
+    return await response.json();
 }
 
-export default {
-    getEventos
-};
+

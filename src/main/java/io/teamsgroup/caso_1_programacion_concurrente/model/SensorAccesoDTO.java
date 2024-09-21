@@ -29,4 +29,8 @@ public class SensorAccesoDTO {
 
     private Integer sensorAcceso;
 
+    @NotNull
+    @Size(max = 255)
+    private String token;
+
 }

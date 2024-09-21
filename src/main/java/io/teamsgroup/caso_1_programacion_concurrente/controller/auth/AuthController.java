@@ -1,9 +1,9 @@
-package io.teamsgroup.caso_1_programacion_concurrente.controller;
+package io.teamsgroup.caso_1_programacion_concurrente.controller.auth;
 
-import io.teamsgroup.caso_1_programacion_concurrente.model.AuthResponse;
-import io.teamsgroup.caso_1_programacion_concurrente.model.LoginRequest;
-import io.teamsgroup.caso_1_programacion_concurrente.model.RegisterRequest;
-import io.teamsgroup.caso_1_programacion_concurrente.service.AuthService;
+import io.teamsgroup.caso_1_programacion_concurrente.model.auth.AuthResponse;
+import io.teamsgroup.caso_1_programacion_concurrente.model.auth.LoginRequest;
+import io.teamsgroup.caso_1_programacion_concurrente.model.auth.RegisterRequest;
+import io.teamsgroup.caso_1_programacion_concurrente.service.auth.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
