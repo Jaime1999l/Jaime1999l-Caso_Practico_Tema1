@@ -47,7 +47,7 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
                 "12345",
                 "admin"
         );
-        /*registrarNuevoUsuario(
+        registrarNuevoUsuario(
                 "Usuario",
                 "Ap1",
                 "Ap12",
@@ -56,7 +56,7 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
                 "Calle Eveneto 123",
                 "12345",
                 "user"
-        );*/
+        );
 
         System.out.println("Usuarios registrados exitosamente.");
 
