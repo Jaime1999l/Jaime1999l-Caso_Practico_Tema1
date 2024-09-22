@@ -40,12 +40,20 @@ export function isAuthenticated() {
 
 export async function register(user) {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        const response = await fetch(`${API_BASE_URL}/auth/register?rol=${user.role}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(user)
+            body: JSON.stringify({
+                nombre: user.nombre,
+                apellido1: user.apellido1,
+                apellido2: user.apellido2,
+                correo: user.correo,
+                contrasena: user.contrasena,
+                telefono: user.telefono,
+                direccion: user.direccion
+            })
         });
         if (!response.ok) {
             throw new Error('Error during registration');

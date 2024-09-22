@@ -1,3 +1,4 @@
+// UserRegisterForm.jsx
 import React, { useState } from 'react';
 import { register } from '../../services/authService/page';
 
@@ -24,7 +25,7 @@ export default function UserRegisterForm() {
                 contrasena: password,
                 telefono: phone,
                 direccion: address,
-                role
+                role // se está utilizando para la URL del backend
             });
             alert('User registered successfully');
         } catch (err) {
@@ -34,14 +35,14 @@ export default function UserRegisterForm() {
 
     return (
         <form onSubmit={handleSubmit}>
-            <input type="text" placeholder="First Name" value={name} onChange={(e) => setName(e.target.value)} />
-            <input type="text" placeholder="Last Name" value={lastName1} onChange={(e) => setLastName1(e.target.value)} />
-            <input type="text" placeholder="Second Last Name" value={lastName2} onChange={(e) => setLastName2(e.target.value)} />
-            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <input type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
-            <input type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <input type="text" placeholder="First Name" value={name} onChange={(e) => setName(e.target.value)} required />
+            <input type="text" placeholder="Last Name" value={lastName1} onChange={(e) => setLastName1(e.target.value)} required />
+            <input type="text" placeholder="Second Last Name" value={lastName2} onChange={(e) => setLastName2(e.target.value)} required />
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <input type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+            <input type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} required />
+            <select value={role} onChange={(e) => setRole(e.target.value)} required>
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
             </select>
