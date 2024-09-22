@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { getAllSensorTemperaturas } from "../../services/sensorTemperaturaService/page";
-import {getAllEventos, getAllEventosTemperatura} from '../../services/eventService/page';
+import { getAllEventosTemperatura } from '../../services/eventService/page';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserDashboard() {
     const [temperatureSensors, setTemperatureSensors] = useState([]);
     const [events, setEvents] = useState([]);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     const temperaturaTokenBase = 'TOKEN_TEMPERATURA_Sensor_';
 
@@ -36,6 +38,12 @@ export default function UserDashboard() {
         fetchData();
     }, []);
 
+    const handleLogout = () => {
+        // Lógica para eliminar tokens u otros datos del usuario.
+        alert('Logged out successfully');
+        navigate('/login'); // Redirigir a la página de inicio de sesión
+    };
+
     if (isLoading) {
         return <p>Loading dashboard...</p>;
     }
@@ -47,26 +55,85 @@ export default function UserDashboard() {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    justify-content: center;
+                    justify-content: flex-start;
                     min-height: 100vh;
-                    background-color: #f9f9f9;
-                    color: #333;
+                    background-color: #2b2b2b;
+                    color: #f0f0f0;
                     font-family: 'Arial', sans-serif;
+                    padding: 20px;
                 }
                 h1 {
-                    margin-bottom: 1rem;
-                    color: #333;
+                    margin-bottom: 1.5rem;
+                    color: #f0f0f0;
+                }
+                .logout-button {
+                    align-self: flex-end;
+                    margin-bottom: 20px;
+                    padding: 10px 20px;
+                    font-size: 14px;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    background-color: #e74c3c;
+                    color: white;
+                    transition: background-color 0.3s ease, transform 0.3s ease;
+                }
+                .logout-button:hover {
+                    background-color: #c0392b;
+                    transform: translateY(-2px);
                 }
                 .section {
                     margin: 20px;
                     padding: 20px;
-                    border: 1px solid #ddd;
+                    border: 1px solid #444;
+                    border-radius: 12px;
+                    background-color: #333;
+                    width: 90%;
+                    max-width: 800px;
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+                }
+                .section h2 {
+                    margin-bottom: 10px;
+                    color: #f0f0f0;
+                }
+                ul {
+                    list-style-type: none;
+                    padding: 0;
+                }
+                li {
+                    padding: 10px 15px;
+                    background-color: #444;
+                    border-bottom: 1px solid #555;
                     border-radius: 8px;
-                    background-color: #fff;
-                    width: 80%;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    margin-bottom: 8px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                p {
+                    color: #ccc;
+                }
+                .title {
+                    font-size: 1.2em;
+                    margin-bottom: 10px;
+                    color: #f39c12;
+                }
+                .fact-item {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 12px;
+                    color: #f0f0f0;
+                }
+                .fact-icon {
+                    width: 40px;
+                    height: 40px;
+                    margin-right: 15px;
+                }
+                .fact-text {
+                    font-size: 16px;
                 }
             `}</style>
+            <div className="logout-button" onClick={handleLogout}>Logout</div>
             <h1>User Dashboard</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
@@ -75,7 +142,9 @@ export default function UserDashboard() {
                 {temperatureSensors.length > 0 ? (
                     <ul>
                         {temperatureSensors.map(sensor => (
-                            <li key={sensor.id}>{sensor.nombre} - Token: {sensor.token}</li>
+                            <li key={sensor.id}>
+                                {sensor.nombre} <span>Token: {sensor.token}</span>
+                            </li>
                         ))}
                     </ul>
                 ) : (
@@ -88,7 +157,9 @@ export default function UserDashboard() {
                 {events.length > 0 ? (
                     <ul>
                         {events.map(event => (
-                            <li key={event.id}>{event.nombre} - Token: {event.token}</li>
+                            <li key={event.id}>
+                                {event.nombre} <span>Token: {event.token}</span>
+                            </li>
                         ))}
                     </ul>
                 ) : (
