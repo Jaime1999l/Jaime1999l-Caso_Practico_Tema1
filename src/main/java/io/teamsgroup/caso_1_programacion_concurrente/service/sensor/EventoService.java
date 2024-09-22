@@ -264,6 +264,7 @@ public class EventoService {
     public void detenerGeneracionEventos() {
         scheduler.shutdown();
     }
+
     public List<EventoDTO> obtenerEventosTemperatura() {
         List<Evento> eventos = eventoRepository.findAll();
         List<Evento> eventosTemperatura = eventos.stream()
