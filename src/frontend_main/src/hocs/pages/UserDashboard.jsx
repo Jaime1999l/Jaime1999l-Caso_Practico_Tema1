@@ -41,7 +41,7 @@ export default function UserDashboard() {
     const handleLogout = () => {
         // Lógica para eliminar tokens u otros datos del usuario.
         alert('Logged out successfully');
-        navigate('/login'); // Redirigir a la página de inicio de sesión
+        navigate('/'); // Redirigir a la página de inicio de sesión
     };
 
     if (isLoading) {
