@@ -30,12 +30,12 @@ export default function AdminDashboard() {
                     temperatureData.push(...await getAllSensorTemperaturas(`${temperaturaTokenBase}${i}`));
                 }
 
-                const eventData = await getAllEventos();
+                const eventData = await getAllEventos(); // Obteniendo todos los eventos, sin filtrarlos
 
                 setMovementSensors(movementData);
                 setAccessSensors(accessData);
                 setTemperatureSensors(temperatureData);
-                setEvents(eventData);
+                setEvents(eventData); // Se establecen todos los eventos en el estado
             } catch (error) {
                 setError('Failed to fetch data.');
                 console.error('Error fetching data:', error);
@@ -54,22 +54,53 @@ export default function AdminDashboard() {
                     align-items: center;
                     justify-content: center;
                     min-height: 100vh;
-                    background-color: #f9f9f9;
+                    background-color: #eef2f7;
                     color: #333;
                     font-family: 'Arial', sans-serif;
                 }
                 h1 {
-                    margin-bottom: 1rem;
-                    color: #333;
+                    margin-bottom: 1.5rem;
+                    color: #222;
                 }
                 .section {
                     margin: 20px;
                     padding: 20px;
                     border: 1px solid #ddd;
-                    border-radius: 8px;
+                    border-radius: 12px;
                     background-color: #fff;
-                    width: 80%;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    width: 90%;
+                    max-width: 800px;
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+                    transition: transform 0.3s ease;
+                }
+                .section:hover {
+                    transform: translateY(-3px);
+                }
+                .section h2 {
+                    margin-bottom: 10px;
+                    color: #555;
+                }
+                ul {
+                    list-style-type: none;
+                    padding: 0;
+                }
+                li {
+                    padding: 10px 15px;
+                    background-color: #f9f9f9;
+                    border-bottom: 1px solid #eee;
+                    border-radius: 8px;
+                    margin-bottom: 8px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    transition: background-color 0.3s ease;
+                }
+                li:hover {
+                    background-color: #f1f1f1;
+                }
+                p {
+                    color: #888;
+                    font-size: 14px;
                 }
             `}</style>
             <h1>Admin Dashboard</h1>
@@ -85,7 +116,9 @@ export default function AdminDashboard() {
                 {movementSensors.length > 0 ? (
                     <ul>
                         {movementSensors.map(sensor => (
-                            <li key={sensor.id}>{sensor.nombre} - Token: {sensor.token}</li>
+                            <li key={sensor.id}>
+                                {sensor.nombre} <span>Token: {sensor.token}</span>
+                            </li>
                         ))}
                     </ul>
                 ) : (
@@ -98,7 +131,9 @@ export default function AdminDashboard() {
                 {accessSensors.length > 0 ? (
                     <ul>
                         {accessSensors.map(sensor => (
-                            <li key={sensor.id}>{sensor.nombre} - Token: {sensor.token}</li>
+                            <li key={sensor.id}>
+                                {sensor.nombre} <span>Token: {sensor.token}</span>
+                            </li>
                         ))}
                     </ul>
                 ) : (
@@ -111,7 +146,9 @@ export default function AdminDashboard() {
                 {temperatureSensors.length > 0 ? (
                     <ul>
                         {temperatureSensors.map(sensor => (
-                            <li key={sensor.id}>{sensor.nombre} - Token: {sensor.token}</li>
+                            <li key={sensor.id}>
+                                {sensor.nombre} <span>Token: {sensor.token}</span>
+                            </li>
                         ))}
                     </ul>
                 ) : (
@@ -124,7 +161,9 @@ export default function AdminDashboard() {
                 {events.length > 0 ? (
                     <ul>
                         {events.map(event => (
-                            <li key={event.id}>{event.nombre} - Token: {event.token}</li>
+                            <li key={event.id}>
+                                {event.nombre} <span>Token: {event.token}</span>
+                            </li>
                         ))}
                     </ul>
                 ) : (
@@ -134,8 +173,5 @@ export default function AdminDashboard() {
         </div>
     );
 }
-
-
-
 
 

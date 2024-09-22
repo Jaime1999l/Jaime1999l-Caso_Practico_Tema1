@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllSensorTemperaturas } from "../../services/sensorTemperaturaService/page";
-import { getAllEventos } from '../../services/eventService/page';
+import {getAllEventos, getAllEventosTemperatura} from '../../services/eventService/page';
 
 export default function UserDashboard() {
     const [temperatureSensors, setTemperatureSensors] = useState([]);
@@ -21,7 +21,7 @@ export default function UserDashboard() {
                 }
 
                 // Fetch events related to temperature sensors
-                const eventData = await getAllEventos();
+                const eventData = await getAllEventosTemperatura();
 
                 setTemperatureSensors(temperatureData);
                 setEvents(eventData);
