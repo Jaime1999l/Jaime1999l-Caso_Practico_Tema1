@@ -38,7 +38,8 @@ export default function UserRegisterForm() {
             setAddress('');
             setRole('user');
         } catch (err) {
-            setError('Error during registration');
+            setError('Error during registration. ' +
+                'Try again with another configuration.');
         }
     };
 

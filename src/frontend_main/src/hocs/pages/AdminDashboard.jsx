@@ -37,7 +37,8 @@ export default function AdminDashboard() {
                 setEvents(eventData);
             } catch (error) {
                 setError('Failed to fetch data.');
-                console.error('Error fetching data:', error);
+                console.error('Error fetching data:' +
+                    'Try again with another configuration.', error);
             }
         };
 
