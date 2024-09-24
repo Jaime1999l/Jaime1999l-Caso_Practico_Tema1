@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
@@ -43,13 +42,13 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
 
         // Registro de usuarios
         registrarNuevoUsuario(
-                "Administrador", "Apellido1", "Apellido2", "admin@example.com", 123456789,
-                "Calle Principal 123", "12345", "admin"
+                "Administrador", "ApellidoA", "ApellidoB", "admin@gmail.com", 123456789,
+                "Calle Principal 123", "a12345_67", "admin"
         );
 
         registrarNuevoUsuario(
-                "Usuario", "Apellido1", "Apellido2", "usuario@example.com", 987654321,
-                "Calle Secundaria 456", "12345", "user"
+                "Usuario", "ApellidoAA", "ApellidoBB", "usuario@gmail.com", 987654321,
+                "Calle Secundaria 456", "a12345_67", "user"
         );
 
         mostrarUsuarios();

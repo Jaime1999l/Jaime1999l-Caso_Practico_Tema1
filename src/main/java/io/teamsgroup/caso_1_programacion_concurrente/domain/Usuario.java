@@ -51,7 +51,7 @@ public class Usuario {
     @Column
     private String direccion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuarios_id", nullable = false)
     private Rol usuarios;
 
