@@ -38,16 +38,16 @@ public class SensorMovimientoService {
         System.out.println("List of all sensors: " + sensorMovimientos.size()); // Verificar cuántos sensores se cargaron
         System.out.println("Searching sensors with token: " + token); // Verificar el token buscado
 
-        // Verificar el token proporcionado
+        // Verificamos el token proporcionado
         boolean tokenValido = sensorMovimientos.stream()
                 .anyMatch(sensor -> sensor.getToken().equals(token));
 
         // Si el token no coincide con ninguno de los sensores, se lanza excepción
         if (!tokenValido) {
-            System.out.println("Token inválido para sensores de movimiento."); // Muestra mensaje en consola
+            System.out.println("Token inválido para sensores de movimiento.");
         }
 
-        // Filtrar los sensores que coinciden con el token proporcionado
+        // Filtramos los sensores que coinciden con el token proporcionado
         List<SensorMovimiento> sensoresConToken = sensorMovimientos.stream()
                 .filter(sensor -> sensor.getToken().equals(token))
                 .toList();

@@ -62,13 +62,6 @@ class Evento {
     OffsetDateTime lastUpdated
 }
 
-enum Notificacion {
-    ACTIVADO
-    DESACTIVADO
-    ERROR
-    USUARIO_REGISTRADO
-    ACCESO_DENEGADO
-}
 
 Usuario "1" -- "0..*" Rol : tiene
 Usuario "0..1" -- "0..*" SensorMovimiento : sensoresMovimiento

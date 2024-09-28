@@ -36,8 +36,8 @@ public class SensorAccesoService {
     public List<SensorAccesoDTO> findAll(String token) {
         List<SensorAcceso> sensorAccesos = sensorAccesoRepository.findAll(Sort.by("id"));
 
-        System.out.println("List of all sensors: " + sensorAccesos.size()); // Verificar cuántos sensores se cargaron
-        System.out.println("Searching sensors with token: " + token); // Verificar el token buscado
+        System.out.println("List of all sensors: " + sensorAccesos.size());
+        System.out.println("Searching sensors with token: " + token);
 
         // Filtrar los sensores que tienen el token proporcionado
         List<SensorAcceso> sensoresConToken = sensorAccesos.stream()

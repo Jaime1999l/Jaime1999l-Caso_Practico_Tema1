@@ -156,7 +156,7 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
             sensorMovimientoDTO.setNombre("Sensor de Movimiento " + i);
             sensorMovimientoDTO.setDatosMovimiento("Movimiento detectado en sensor " + i);
             sensorMovimientoDTO.setNotificacion(Notificacion.ACTIVADO);
-            sensorMovimientoDTO.setToken(generatePredictableToken("TOKEN_MOVIMIENTO", i)); // Token predecible
+            sensorMovimientoDTO.setToken(generatePredictableToken("TOKEN_MOVIMIENTO", i));
             System.out.println("Creando sensor de movimiento con token: " + sensorMovimientoDTO.getToken());
             sensorMovimientoService.create(sensorMovimientoDTO);
         }
@@ -167,9 +167,9 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
             SensorAccesoDTO sensorAccesoDTO = new SensorAccesoDTO();
             sensorAccesoDTO.setNombre("Sensor de Acceso " + i);
             sensorAccesoDTO.setDatosAcceso("Acceso registrado en sensor " + i);
-            sensorAccesoDTO.setRespuesta(i % 2 == 0); // Alternar acceso permitido/denegado
+            sensorAccesoDTO.setRespuesta(i % 2 == 0);
             sensorAccesoDTO.setNotificacion(Notificacion.ACTIVADO);
-            sensorAccesoDTO.setToken(generatePredictableToken("TOKEN_ACCESO", i)); // Token predecible
+            sensorAccesoDTO.setToken(generatePredictableToken("TOKEN_ACCESO", i));
             System.out.println("Creando sensor de acceso con token: " + sensorAccesoDTO.getToken());
             sensorAccesoService.create(sensorAccesoDTO);
         }
@@ -181,7 +181,7 @@ public class Caso1ProgramacionConcurrenteApplication implements CommandLineRunne
             sensorTemperaturaDTO.setNombre("Sensor de Temperatura " + i);
             sensorTemperaturaDTO.setDatosTemperatura(20.0 + i);
             sensorTemperaturaDTO.setNotificacion(Notificacion.ACTIVADO);
-            sensorTemperaturaDTO.setToken(generatePredictableToken("TOKEN_TEMPERATURA", i)); // Token predecible
+            sensorTemperaturaDTO.setToken(generatePredictableToken("TOKEN_TEMPERATURA", i));
             System.out.println("Creando sensor de temperatura con token: " + sensorTemperaturaDTO.getToken());
             sensorTemperaturaService.create(sensorTemperaturaDTO);
         }

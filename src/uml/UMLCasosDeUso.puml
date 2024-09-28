@@ -1,0 +1,22 @@
+@startuml
+actor Administrador as Admin
+actor Usuario as User
+
+rectangle Sistema {
+  usecase "Registro de Usuarios" as CU1
+  usecase "Gestión de Sensores" as CU2
+  usecase "Monitoreo de Eventos" as CU3
+  usecase "Autenticación" as CU4
+  usecase "Notificación de Eventos de Temperatura" as CU5
+  usecase "Gestión de Sensores de Temperatura" as CU6
+}
+
+Admin --> CU1
+Admin --> CU2
+Admin --> CU3
+Admin --> CU4
+User --> CU4
+User --> CU5
+User --> CU6
+
+@enduml

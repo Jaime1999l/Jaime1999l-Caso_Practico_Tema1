@@ -44,7 +44,7 @@ public class SensorTemperaturaService {
                 .filter(sensor -> sensor.getToken().equals(token))
                 .toList();
 
-        // Si no hay sensores con el token, lanzar excepción
+        // Si no hay sensores con el token, lanzamos una excepción
         if (sensoresConToken.isEmpty()) {
             System.out.println("Token inválido para sensores de temperatura."); // Muestra mensaje en consola
         }
