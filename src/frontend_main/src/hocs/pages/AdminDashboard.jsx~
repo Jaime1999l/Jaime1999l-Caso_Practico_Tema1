@@ -14,7 +14,7 @@ export default function AdminDashboard() {
     const [accessSensors, setAccessSensors] = useState([]);
     const [temperatureSensors, setTemperatureSensors] = useState([]);
     const [events, setEvents] = useState([]);
-    const x = useState('');
+    const [error, setError] = useState('');
     const [visibleSection, setVisibleSection] = useState(''); // Para mostrar secciones
 
     const navigate = useNavigate();
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
                 setTemperatureSensors(temperatureData);
                 setEvents(eventData);
             } catch (error) {
-                x[1]('Failed to fetch data.');
+                setError('Failed to fetch data.');
                 console.error('Error fetching data:' +
                     'Try again with another configuration.', error);
             }
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
             `}</style>
             <div className="logout-button" onClick={handleLogout}>Logout</div>
             <h1>Admin Dashboard</h1>
-            {x[0] && <p style={{ color: 'red' }}>{x[0]}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <div className="nav-buttons">
                 <button onClick={() => setVisibleSection('user')}>Show User Registration Form</button>
